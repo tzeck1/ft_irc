@@ -96,5 +96,5 @@ re-read for new line when poll notifies
 keep buffer if read without newline
 keep reading for new stuff unlike gnl.
 https://www.ibm.com/docs/en/i/7.2?topic=designs-using-poll-instead-select
-
+nc -l 420 to listen for input
 */
