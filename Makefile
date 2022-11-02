@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-CFLAGS = #-Wall -Wextra -Werror -std=c++98
+CFLAGS = -Wall -Wextra -Werror -std=c++98 -g -fsanitize=address
 # COLORS
 Y = "\033[33m"
 R = "\033[31m"
