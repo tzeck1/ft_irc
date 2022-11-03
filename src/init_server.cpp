@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/03 10:52:51 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/03 16:05:30 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/03 18:42:44 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,10 +163,7 @@ void	init(void)
 						}
 						break ;
 					}
-					// printf("end of buffer: %d, %d, %d, %d\n", buffer[err - 3], buffer[err - 2], buffer[err - 1], buffer[err]);
 					recv_msg << buffer;
-
-					std::cout << "Received: " << recv_msg.str() << " from " << client_fds[i].fd << std::endl;
 
 					if (err == 0)
 					{
@@ -178,8 +175,16 @@ void	init(void)
 					std::cout << len << " bytes received" << std::endl;
 
 					// err = send(client_fds[i].fd, buffer, len, 0);
-					if (recv_msg.str().find("\r\n") != std::string::npos)
+					if (recv_msg.str().find("\r\n") != std::string::npos) /* TODO seperate received messages by ending sequence */
 					{
+						std::cout << "Received: " << recv_msg.str() << " from " << client_fds[i].fd << std::endl;
+						for (unsigned long n = 0; n <= recv_msg.str().length() + 3; n++)
+						{
+							if (recv_msg.str().c_str()[n] == 32)
+								std::cout << "   ";
+							else
+								printf("%d ", recv_msg.str().c_str()[n]);
+						}
 						err = handle_cmds(recv_msg.str(), client_fds, i);
 						if (err < 0)
 						{
