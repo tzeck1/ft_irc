@@ -6,11 +6,22 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/03 10:52:51 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/03 12:51:10 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/03 16:05:30 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/common.hpp"
+
+static int	handle_cmds(std::string msg, std::vector<struct pollfd> &client_fds, int i)
+{
+	int	err = 0;
+
+	if (msg.find("USER") != std::string::npos)
+		err = send(client_fds[i].fd, ":10.11.4.29 001 mmeising :Welcome to the Internet Relay Network mmeising!mmeising@10.11.4.27\r\n", 94, 0);
+	else if (msg.find("PING") != std::string::npos)
+		err = send(client_fds[i].fd, "PONG 10.11.4.29\r\n", 17, 0);
+	return (err);
+}
 
 void	init(void)
 {
@@ -22,6 +33,7 @@ void	init(void)
 	std::vector<struct pollfd>	client_fds(200);
 	bool						end_server = false, compress_array = false, close_conn;
 	char						buffer[80];
+	std::stringstream			recv_msg;
 
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_fd < 0)
@@ -94,18 +106,18 @@ void	init(void)
 			{
 				std::cerr << "Error. Revents = " << client_fds[i].revents << std::endl;
 				//testing
-				// err = recv(client_fds[i].fd, buffer, sizeof(buffer), 0);
-				// if (err < 0)
-				// {
-				// 	if (errno != EWOULDBLOCK)
-				// 	{
-				// 		std::cerr << "Receive failed" << std::endl;
-				// 		close_conn = true;
-				// 	}
-				// 	break ;
-				// }
+				err = recv(client_fds[i].fd, buffer, sizeof(buffer), 0);
+				if (err < 0)
+				{
+					if (errno != EWOULDBLOCK)
+					{
+						std::cerr << "Receive failed" << std::endl;
+						close_conn = true;
+					}
+					break ;
+				}
 
-				// std::cout << "Received: " << buffer << " from " << client_fds[i].fd << std::endl;
+				std::cout << "Received: " << buffer << " from " << client_fds[i].fd << std::endl;
 				//testing
 				end_server = true;
 				break ;
@@ -151,8 +163,10 @@ void	init(void)
 						}
 						break ;
 					}
+					// printf("end of buffer: %d, %d, %d, %d\n", buffer[err - 3], buffer[err - 2], buffer[err - 1], buffer[err]);
+					recv_msg << buffer;
 
-					std::cout << "Received: " << buffer << " from " << client_fds[i].fd << std::endl;
+					std::cout << "Received: " << recv_msg.str() << " from " << client_fds[i].fd << std::endl;
 
 					if (err == 0)
 					{
@@ -164,12 +178,16 @@ void	init(void)
 					std::cout << len << " bytes received" << std::endl;
 
 					// err = send(client_fds[i].fd, buffer, len, 0);
-					err = send(client_fds[i].fd, ":10.11.4.29 001 mmeising :Welcome to the Internet Relay Network mmeising!mmeising@10.11.4.27\r\n\r\n", 96, 0);
-					if (err < 0)
+					if (recv_msg.str().find("\r\n") != std::string::npos)
 					{
-						std::cerr << "Sending failed" << std::endl;
-						close_conn = true;
-						break ;
+						err = handle_cmds(recv_msg.str(), client_fds, i);
+						if (err < 0)
+						{
+							std::cerr << "Sending failed" << std::endl;
+							close_conn = true;
+							break ;
+						}
+						recv_msg.str(std::string());
 					}
 				} while (true);
 				if (close_conn)
