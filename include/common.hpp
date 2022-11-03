@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   common.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 10:19:35 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/03 12:16:57 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/03 15:57:09 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,11 @@
 #include <vector>
 #include <poll.h>
 #include <errno.h>
+#include <cstring>
 
 void	init(void);
 
 /*------	MACROS	-----*/
 #define SERVER_PORT 420
 #define MAXLINE		4096
+#define SERVER_IP	"10.11.4.29"
