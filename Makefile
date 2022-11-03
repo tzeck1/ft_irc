@@ -6,7 +6,7 @@
 #    By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/02 13:45:10 by btenzlin         ###   ########.fr        #
+#    Updated: 2022/11/03 12:18:11 by btenzlin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,10 +20,11 @@ X = "\033[0m"
 # EXECUTABLE
 NAME = ./ircserv
 # PATHS
-SRC_PATH = /src/
-OBJ_PATH = /obj/
+SRC_PATH = ./src/
+OBJ_PATH = ./obj/
 # SOURCES
-SRC =	main.cpp
+SRC =	main.cpp \
+		$(SRC_PATH)init_server.cpp
 
 # OBJECTS
 OBJ = $(patsubst $(SRC_PATH)%.c, $(OBJ_PATH)%.o, $(SRC))

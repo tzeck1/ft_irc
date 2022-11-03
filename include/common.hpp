@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   common.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 10:19:35 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/02 12:41:03 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/03 12:16:57 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,13 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <exception>
+#include <fcntl.h> //file control
+#include <vector>
+#include <poll.h>
+#include <errno.h>
+
+void	init(void);
 
 /*------	MACROS	-----*/
 #define SERVER_PORT 420
