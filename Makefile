@@ -6,11 +6,11 @@
 #    By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/04 16:23:17 by mmeising         ###   ########.fr        #
+#    Updated: 2022/11/04 16:25:15 by mmeising         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-VPATH = src
+VPATH = src .
 
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g -fsanitize=address
 # COLORS
