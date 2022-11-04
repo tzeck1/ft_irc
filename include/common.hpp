@@ -6,7 +6,7 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 10:19:35 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/03 15:57:09 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/04 17:03:25 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@
 #include <errno.h>
 #include <cstring>
 
-void	init(void);
+void		init(void);
 
 /*------	MACROS	-----*/
 #define SERVER_PORT 420
 #define MAXLINE		4096
-#define SERVER_IP	"10.11.4.29"
+#define SERVER_IP	"10.11.4.27"
