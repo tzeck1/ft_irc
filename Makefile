@@ -3,14 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+         #
+#    By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/03 12:18:11 by btenzlin         ###   ########.fr        #
+#    Updated: 2022/11/04 16:23:17 by mmeising         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98 -g -fsanitize=address
+VPATH = src
+
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g -fsanitize=address
 # COLORS
 Y = "\033[33m"
 R = "\033[31m"
@@ -21,27 +23,31 @@ X = "\033[0m"
 NAME = ./ircserv
 # PATHS
 SRC_PATH = ./src/
-OBJ_PATH = ./obj/
+OBJ_PATH = ./_obj/
 # SOURCES
 SRC =	main.cpp \
-		$(SRC_PATH)init_server.cpp
+		welcome.cpp \
+		init_server.cpp \
 
 # OBJECTS
-OBJ = $(patsubst $(SRC_PATH)%.c, $(OBJ_PATH)%.o, $(SRC))
+OBJ :=$(addprefix $(OBJ_PATH), $(SRC:.cpp=.o))
+# INCLUDES
+INC = -I ./include
+
 # RULES
 all: $(NAME)
 
-$(OBJ_PATH)%.o :$(SRC_PATH)%.c
-	@echo $(Y)Compiling [$@]...$(X)
-	@mkdir -p $(dir $@)
-	@c++ $(CFLAGS) -c -o $@ $<
-	@echo $(G)Finished [$@]$(X)
-
 $(NAME): $(OBJ)
-	@echo $(Y)Compiling [$(SRC)]
+	@echo $(Y)Compiling [$(OBJ)]
 	@echo into [$(NAME)]...$(X)
-	@c++ $(CFLAGS) $(OBJ) -o $(NAME)
+	@$(CXX) $(CXXFLAGS) $^ $(INC) -o $(NAME)
 	@echo $(G)Finished [$(NAME)]$(X)
+
+$(OBJ_PATH)%.o: %.cpp
+	@echo $(Y)Compiling [$@]...$(X)
+	@mkdir -p _obj
+	@$(CXX) $(CXXFLAGS) -MMD -MP -c $< $(INC) -o $@
+	@echo $(G)Finished [$@]$(X)
 
 clean:
 	@if [ -d "$(OBJ_PATH)" ]; then \
@@ -60,4 +66,6 @@ fclean: clean
 re: fclean all
 
 # ADDITIONAL RULES
-.PHONY: all, clean, fclean, re, norm
+.PHONY: all clean fclean re
+
+-include $(OBJ:.o=.d)
