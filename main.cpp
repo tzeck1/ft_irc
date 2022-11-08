@@ -3,29 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 10:29:09 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/04 17:18:21 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/08 17:49:57 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.hpp"
 #include "user.hpp"
+#include "Server.hpp"
 
 // int	main(void)
 // {
 // 	init();
 // }
 
-int main()
+int	main(void)
 {
-	std::string	msg;
-
-	msg = "NICK mmeising\r\nUSER max * * :<full name>\r\n";
-	User new_user = welcome_msg(msg, 0);
-	std::cout << "|" << new_user.build_reply() << "|" << std::endl;
+	Server	server(420);
+	server.init();
 }
+
+// int main()
+// {
+// 	std::string	msg;
+
+// 	msg = "NICK mmeising\r\nUSER max * * :<full name>\r\n";
+// 	User new_user = welcome_msg(msg, 0);
+// 	std::cout << "|" << new_user.build_reply() << "|" << std::endl;
+// }
 
 // int main(int argc, char **argv)
 // {
