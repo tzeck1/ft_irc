@@ -6,11 +6,14 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 20:50:27 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/08 17:56:20 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/09 17:10:14 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
+
 #include "common.hpp"
+#include "user.hpp"
 
 class Server
 {
