@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/03 16:11:20 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/04 17:16:51 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/09 17:37:47 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#pragma once
 
 #include "common.hpp"
 
@@ -35,7 +37,7 @@ class User {
 		{
 			std::stringstream	ss;
 
-			ss	<< SERVER_IP << " 001 " << get_nick() 
+			ss	<< ":" << SERVER_IP << " 001 " << get_nick() 
 				<< " :Welcome to the Internet Relay Network "
 				<< get_nick() << "!" << get_user() << "@" << get_user_ip() << "\r\n";
 			return (ss.str());
