@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+         #
+#    By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/10 13:41:36 by mmeising         ###   ########.fr        #
+#    Updated: 2022/11/12 13:15:32 by tzeck            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ X = "\033[0m"
 NAME = ./ircserv
 # PATHS
 SRC_PATH = ./src/
-OBJ_PATH = ./_obj/
+OBJ_PATH = ./.obj/
 # SOURCES
 SRC =	main.cpp \
 
