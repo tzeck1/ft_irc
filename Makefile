@@ -6,7 +6,7 @@
 #    By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/12 13:15:32 by tzeck            ###   ########.fr        #
+#    Updated: 2022/11/14 10:38:54 by tzeck            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ NAME = ./ircserv
 SRC_PATH = ./src/
 OBJ_PATH = ./.obj/
 # SOURCES
-SRC =	main.cpp \
+SRC =	main.cpp init_server.cpp loop_requests.cpp utils.cpp
 
 # OBJECTS
 OBJ :=$(addprefix $(OBJ_PATH), $(SRC:.cpp=.o))
@@ -43,7 +43,7 @@ $(NAME): $(OBJ)
 
 $(OBJ_PATH)%.o: %.cpp
 	@echo $(Y)Compiling [$@]...$(X)
-	@mkdir -p _obj
+	@mkdir -p .obj
 	@$(CXX) $(CXXFLAGS) -MMD -MP -c $< $(INC) -o $@
 	@echo $(G)Finished [$@]$(X)
 
