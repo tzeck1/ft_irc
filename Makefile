@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+         #
+#    By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/14 10:38:54 by tzeck            ###   ########.fr        #
+#    Updated: 2022/11/14 16:43:17 by mmeising         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,10 @@ NAME = ./ircserv
 SRC_PATH = ./src/
 OBJ_PATH = ./.obj/
 # SOURCES
-SRC =	main.cpp init_server.cpp loop_requests.cpp utils.cpp
+SRC =	main.cpp										\
+		init_server.cpp									\
+		utils.cpp										\
+		# loop_requests.cpp								\
 
 # OBJECTS
 OBJ :=$(addprefix $(OBJ_PATH), $(SRC:.cpp=.o))
