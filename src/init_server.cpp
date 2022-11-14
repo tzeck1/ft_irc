@@ -1,0 +1,49 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_server.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/12 13:39:36 by tzeck             #+#    #+#             */
+/*   Updated: 2022/11/14 10:43:21 by tzeck            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "common.hpp"
+
+int	init_server(void)
+{
+	/*-----	create socket	-----*/
+	int	socket_d = socket(AF_INET, SOCK_STREAM, 0); //socket discriptor
+	if (socket_d < 0)
+		server_error("socket() failed!");
+
+	/*-----	make socket reuseable	-----*/
+	int on = 1; //string containing the option value (useless but will break with NULL)
+	int	err = setsockopt(socket_d, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)); // enable socket options
+	if (err == -1)
+		server_error("setsockopt() failed!");
+	
+	/*-----	set socket to non-blocking	-----*/
+	err = fcntl(socket_d, F_SETFD, O_NONBLOCK); // set nonblocking flag to socket_d
+	if (err < 0)
+		server_error("fcntl() failed!");
+
+	/*-----	assigne address to socket	-----*/
+	struct sockaddr_in addr;
+	addr.sin_family = AF_INET; // set to ipv4
+	/*	htonl and htons set network byte order so protocoll can recieve/send stuff	*/
+	addr.sin_addr.s_addr = htonl(INADDR_ANY); // set address of socket to non-specific
+	addr.sin_port = htons(SERVER_PORT); // set socket to port (420)
+	err = bind(socket_d, (struct sockaddr *)&addr, sizeof(addr));
+	if (err == -1)
+		server_error("bind() failed!");
+
+	/*-----	listen for connections on a socket	-----*/
+	err = listen(socket_d, BACKLOG); // marks socket as passive to recieve incomming messages
+	if (err == -1)
+		server_error("listen() failed!");
+
+	return (socket_d);
+}
