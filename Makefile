@@ -6,7 +6,7 @@
 #    By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/15 13:05:00 by mmeising         ###   ########.fr        #
+#    Updated: 2022/11/16 14:09:55 by mmeising         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,7 @@ INC = -I ./include
 
 # RULES
 all: $(NAME)
+	./$(NAME)
 
 $(NAME): $(OBJ)
 	@echo $(Y)Compiling [$(OBJ)]

@@ -6,11 +6,12 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/14 16:50:46 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/17 14:07:18 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.hpp"
+#include <sstream>
 
 /**
  * 0 - quiet: 			No messages printed.
@@ -77,4 +78,15 @@ void	loop_error(std::string err, bool &end_server, bool kill)
 {
 	std::cout << RED_BOLD << "RUNTIME ERROR: " << RESET << RED << err << std::endl;
 	end_server = kill;
+}
+
+std::string	ip_itostr(in_addr_t ip_raw)
+{
+	std::stringstream		ss;
+
+	ss	<< (ip_raw >>  0 & 0xff) << "."
+		<< (ip_raw >>  8 & 0xff) << "."
+		<< (ip_raw >> 16 & 0xff) << "."
+		<< (ip_raw >> 24 & 0xff);
+	return (ss.str());
 }
