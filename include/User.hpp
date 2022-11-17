@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:11:31 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/17 14:05:03 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/17 17:09:19 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,18 @@
 class	User {
 
 public:
+	// static size_t	_user_count;
 
 	User(void);
+	User(std::string str);
+	User(in_addr_t raw_ip);
 
 	/* ----------------- GETTER ----------------- */
 
-	const std::string	get_nick(void) const;
-	const std::string	get_user(void) const;
-	const std::string	get_ip(void) const;
-	const bool			get_is_complete(void) const;
+	 std::string	get_nick(void) const;
+	 std::string	get_user(void) const;
+	 std::string	get_ip(void) const;
+	 bool			get_is_complete(void) const;
 
 	/* ----------------- SETTER ----------------- */
 
@@ -36,11 +39,13 @@ public:
 
 private:
 
-	std::string	_nick;
-	std::string	_user;
-	std::string	_ip;
-	bool		_is_complete;
+	std::string		_nick;
+	std::string		_user;
+	std::string		_ip;
+	bool			_is_complete;
 	//maybe save fd
 };
 
-void	set_data(User user, std::string client_msg);
+void	init_user(User &user, std::string client_msg, int fd);
+void	parse_cmds(std::vector<pollfd> &fds, std::string msg,
+					int i, std::vector<User> &users);

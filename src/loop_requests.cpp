@@ -6,12 +6,13 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/17 13:48:14 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/17 17:09:15 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.hpp"
 #include <unistd.h>
+#include "User.hpp"
 
 static void	init_poll(pollfd *poll_fd, int fds_size)
 {
@@ -23,12 +24,15 @@ static void	init_poll(pollfd *poll_fd, int fds_size)
 		irc_log(CRITICAL, "poll() timed out!");
 }
 
-static void	accept_users(std::vector<pollfd> &fds, int socket_d, int &fds_size)
+static void	accept_users(std::vector<pollfd> &fds, int socket_d, int &fds_size, std::vector<User> &users)
 {
+	struct sockaddr_in	client_addr;
+	socklen_t			len;
+
 	irc_log(TRACE, "accept_users called");
 	while (true)
 	{
-		int	new_fd = accept(socket_d, NULL, NULL);
+		int	new_fd = accept(socket_d, (sockaddr*)&client_addr, &len);
 		if (new_fd == -1)
 		{
 			if (errno != EWOULDBLOCK)
@@ -38,11 +42,13 @@ static void	accept_users(std::vector<pollfd> &fds, int socket_d, int &fds_size)
 		fds[fds_size].fd = new_fd;
 		fds[fds_size].events = POLLIN;
 		fds_size++;
+		User	user(client_addr.sin_addr.s_addr);
+		users.push_back(user);
 		irc_log(DEBUG, "Accepted a new user");
 	}
 }
 
-static void	receive_msg(int client_fd)
+static std::string	receive_msg(int client_fd)
 {
 	char	buffer[512];
 	int		err;
@@ -55,20 +61,26 @@ static void	receive_msg(int client_fd)
 	if (err == 0) //TODO: should erase vector and 'close' fd
 		irc_log(CRITICAL, "connection closed by user"); //just here to avoid infinite loop
 	std::cout << "buffer: " << buffer << std::endl;
-	//TODO: handle commands in buffer
+	return (buffer);
 }
 
 void	loop_requests(int socket_d)
 {
 	std::vector<pollfd>	fds(200); // init to 200 empty fd
+	User				server("server");
+	// server._user_count = 1;
+	std::vector<User>	users;
+	int					fds_size = 1;
+	std::string			msg;
+
+	users.push_back(server);
 	fds[0].fd = socket_d; // open file
 	fds[0].events = POLLIN; // requestet events (POLLIN = there is data to be read)
-	int	fds_size = 1;
 
 	while (true)
 	{
-		init_poll(&fds[0], fds_size); //seems like poll returns with POLLIN but no message when new connection appears
-		accept_users(fds, socket_d, fds_size);
+		init_poll(&fds[0], fds_size); //poll returns with POLLIN but no message when new connection appears
+		accept_users(fds, socket_d, fds_size, users);
 		for (int i = 0; i < fds_size; i++)
 		{
 			std::cout << "REVENTS for fd " << i << " is " << fds[i].revents << std::endl;
@@ -81,7 +93,12 @@ void	loop_requests(int socket_d)
 				irc_log(CRITICAL, "Error revents problem!");
 			}
 			if (i != 0) //if not socket_d
-				receive_msg(fds[i].fd);
+			{
+				msg = receive_msg(fds[i].fd);
+				std::cout << "msg received is: " << msg << std::endl;
+				if (msg.size() != 0)
+					parse_cmds(fds, msg, i, users);
+			}
 		}
 	}
 }

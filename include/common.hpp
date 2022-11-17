@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   common.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 10:19:35 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/15 16:37:47 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/17 16:06:45 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 /*------	MACROS	-----*/
 #define SERVER_PORT 420
 #define BACKLOG		32 // how many connections can queue up (listen function)
-#define SERVER_IP	"10.11.4.29"
+#define SERVER_IP	"10.11.4.27"
 #define TIMEOUT		(3 * 60 * 1000) //timeout for poll
 
 # define RED			"\033[31m"
@@ -61,9 +61,11 @@ typedef enum e_err {
 }	t_err;
 
 /*------	FUNCTIONS	-----*/
-int		init_server(void);
-void	loop_requests(int socket_d);
+int			init_server(void);
+void		loop_requests(int socket_d);
 
-t_err	irc_log(enum e_err type, std::string msg);
+std::string	ip_itostr(in_addr_t ip_raw);
 
-void	server_error(std::string err);
+t_err		irc_log(enum e_err type, std::string msg);
+
+void		server_error(std::string err);

@@ -6,7 +6,7 @@
 #    By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/16 14:09:55 by mmeising         ###   ########.fr        #
+#    Updated: 2022/11/17 15:53:29 by mmeising         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,8 @@ NAME = ./ircserv
 # PATHS
 OBJ_PATH = ./.obj/
 # SOURCES
-SRC =	main.cpp init_server.cpp utils.cpp loop_requests.cpp
+SRC =	main.cpp init_server.cpp utils.cpp loop_requests.cpp handle_cmds.cpp \
+		User.cpp
 
 # OBJECTS
 OBJ :=$(addprefix $(OBJ_PATH), $(SRC:.cpp=.o))
