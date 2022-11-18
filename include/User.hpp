@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:11:31 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/17 17:09:19 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/18 12:24:09 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ private:
 	//maybe save fd
 };
 
+typedef std::pair<pollfd, User>	client;	
+typedef std::vector<client>::size_type size;
+
 void	init_user(User &user, std::string client_msg, int fd);
-void	parse_cmds(std::vector<pollfd> &fds, std::string msg,
-					int i, std::vector<User> &users);
+void	parse_cmds(std::vector<client> &clients, std::string msg, int i);
