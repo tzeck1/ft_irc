@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_cmds.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/18 12:20:05 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/19 15:32:17 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,14 @@ void	parse_cmds(std::vector<client> &clients, std::string msg, int i)
 	std::string	tmp;
 
 	irc_log(TRACE, "called handle_cmds");
-	for (std::string::size_type	pos = msg.find("\r\n");
-			pos != std::string::npos; pos = msg.find("\r\n"))
+	for (std::string::size_type	pos = msg.find("\r\n"); pos != std::string::npos; pos = msg.find("\r\n"))
 	{
 		if (pos == 0)
 			irc_log(WARNING, "escape sequence at beginning of message");
 		tmp = msg.substr(0, pos);
 		msg.erase(0, pos + 2);
 		if (clients[i].second.get_is_complete() == false)
-			init_user(clients[i].second, tmp, clients[i].first.fd);
+			init_user(clients[i].second, clients, tmp, clients[i].first.fd);
 		else
 			handle_cmd(clients, tmp, i);
 	}

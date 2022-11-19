@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:14:58 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/17 17:06:54 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/19 15:36:48 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,15 @@
 User::User(void) : _is_complete(false) {}
 User::User(std::string str) : _nick(str), _is_complete(false) {}
 User::User(in_addr_t raw_ip) : _ip(ip_itostr(raw_ip)), _is_complete(false) {}
+
+static std::string	build_nick_in_use(User user)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 433 * " << user.get_nick()
+		<< " :Nickname is already in use." << "\r\n";
+	return (ss.str());
+}
 
 static std::string	build_welcome(User user)
 {
@@ -27,12 +36,28 @@ static std::string	build_welcome(User user)
 	return (ss.str());
 }
 
-void	init_user(User &user, std::string client_msg, int fd)
+static bool	nick_in_use(std::string nick, std::vector<client> &clients)
+{
+	for (std::vector<client>::iterator it = clients.begin(); it != clients.end(); it++)
+	{
+		if (nick == it->second.get_nick())
+			return (false);
+	}
+	return (true);
+}
+
+void	init_user(User &user, std::vector<client> &clients, std::string client_msg, int fd)
 {
 	irc_log(TRACE, "called set_data");
 	std::cout << "with msg "<< client_msg << std::endl;
 	if (client_msg.find("NICK ") == 0)
 	{
+		if (nick_in_use(client_msg.substr(5, (client_msg.length() - 5)) ,clients) == true)
+		{
+			std::string	error = build_nick_in_use(user);
+			std::cout << "about to send NICKNAMEINUSE: " << error << std::endl;
+			send(fd, error.c_str(), error.length(), 0);
+		}
 		user.set_nick(client_msg.substr(5, (client_msg.length() - 5)));
 		irc_log(DEBUG, "nick is set to");
 		std::cout << user.get_nick() << std::endl;
