@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   loop_requests.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/18 15:26:15 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/19 14:50:24 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,9 @@ static void	accept_users(std::vector<client> &clients, int socket_d)
 			break ; //else nothing more to accept
 		}
 		pollfd	new_pollfd;
+		new_pollfd.fd = new_fd;
 		new_pollfd.events = POLLIN;
-		new_pollfd.events = new_fd;
+		new_pollfd.revents = 1;
 		User	new_user(client_addr.sin_addr.s_addr);
 		clients.push_back(client(new_pollfd, new_user));
 		irc_log(DEBUG, "Accepted a new user");
@@ -91,7 +92,6 @@ void	loop_requests(int socket_d)
 		accept_users(clients, socket_d);
 		for (size i = 0; i < clients.size(); i++)
 		{
-			std::cout << "REVENTS for fd " << i << " is " << clients[i].first.revents << std::endl;
 			if (clients[i].first.revents == 0) //skips user first time after accept
 				continue ;
 			if (clients[i].first.revents != POLLIN && clients[i].first.revents != (POLLIN | POLLHUP)) //POLLIN: incoming connection POLLIN|POLLHUP: disconnect by user

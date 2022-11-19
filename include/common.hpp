@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   common.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 10:19:35 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/18 11:48:38 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/19 14:28:03 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 /*------	MACROS	-----*/
 #define SERVER_PORT 420
 #define BACKLOG		32 // how many connections can queue up (listen function)
-#define SERVER_IP	"10.11.4.27"
+#define SERVER_IP	"172.17.252.83"
 #define TIMEOUT		(3 * 60 * 1000) //timeout for poll
 
 # define RED			"\033[31m"
