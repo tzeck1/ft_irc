@@ -6,7 +6,7 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/21 17:04:00 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/21 18:57:45 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <fstream>
 #include <unistd.h>
 
-static void	handle_cmd(std::vector<client> &clients, std::string msg, int i)
+static void	handle_cmd(std::vector<client> &clients, std::string &msg, int i)
 {
 	std::string	reply;
 
@@ -25,19 +25,19 @@ static void	handle_cmd(std::vector<client> &clients, std::string msg, int i)
 		reply = "PONG " + (std::string)SERVER_IP + "\r\n";
 		send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 	}
-	else if (msg.find("QUIT ") == 0)
-		close_connection(clients, i);
-	// else if (msg.find("QUIT "))
+	// else if (msg.find("QUIT ") == 0)
+		//need to send msg to all members of same channel 	
 	// if (msg.find("NICK "))
 }
 
-void	parse_cmds(std::vector<client> &clients, std::string msg, int i)
+void	parse_cmds(std::vector<client> &clients, std::string &msg, int i)
 {
 	std::string	tmp;
 
 	irc_log(TRACE, "called handle_cmds");
 	for (std::string::size_type	pos = msg.find("\r\n"); pos != std::string::npos; pos = msg.find("\r\n"))
 	{
+		irc_log(DEBUG, "inside for loop of parse_cmds");
 		if (pos == 0)
 			irc_log(WARNING, "escape sequence at beginning of message");
 		tmp = msg.substr(0, pos);

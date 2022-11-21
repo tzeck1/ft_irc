@@ -6,7 +6,7 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/21 17:12:20 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/21 18:56:22 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ void	loop_requests(int socket_d)
 	std::vector<client>	clients;
 	User				server("server");
 	pollfd	socket;
-	std::string			msg;
 
 	socket.fd = socket_d; // open file
 	socket.events = POLLIN; // requestet events (POLLIN = there is data to be read)
@@ -109,11 +108,13 @@ void	loop_requests(int socket_d)
 			}
 			if (i != 0) //if not socket_d
 			{
-				msg = receive_msg(clients[i].first.fd, clients, i);
-				std::cout << "msg received is: " << msg << std::endl;
-				if (msg.size() != 0)
-					parse_cmds(clients, msg, i);
+				clients[i].second.msg += receive_msg(clients[i].first.fd, clients, i);//close only in here when receiving len of 0
+				// std::cout << "msg in user is: " << clients[i].second.msg << std::endl;
+				if (i < clients.size() && clients[i].second.msg.find("\r\n") != std::string::npos)
+					parse_cmds(clients, clients[i].second.msg, i);//no close in here cause QUIT is just a message at first
 			}
+			std::cout << "main loop with iterator " << i << std::endl;
 		}
+		irc_log(TRACE, "after the main loop");
 	}
 }
