@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:14:58 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/19 15:36:48 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/21 14:10:57 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,9 @@ static bool	nick_in_use(std::string nick, std::vector<client> &clients)
 	for (std::vector<client>::iterator it = clients.begin(); it != clients.end(); it++)
 	{
 		if (nick == it->second.get_nick())
-			return (false);
+			return (true);
 	}
-	return (true);
+	return (false);
 }
 
 void	init_user(User &user, std::vector<client> &clients, std::string client_msg, int fd)
@@ -52,21 +52,27 @@ void	init_user(User &user, std::vector<client> &clients, std::string client_msg,
 	std::cout << "with msg "<< client_msg << std::endl;
 	if (client_msg.find("NICK ") == 0)
 	{
-		if (nick_in_use(client_msg.substr(5, (client_msg.length() - 5)) ,clients) == true)
+		if (nick_in_use(client_msg.substr(5, (client_msg.length() - 5)), clients) == true)
 		{
 			std::string	error = build_nick_in_use(user);
 			std::cout << "about to send NICKNAMEINUSE: " << error << std::endl;
 			send(fd, error.c_str(), error.length(), 0);
 		}
-		user.set_nick(client_msg.substr(5, (client_msg.length() - 5)));
-		irc_log(DEBUG, "nick is set to");
-		std::cout << user.get_nick() << std::endl;
+		else
+		{
+			user.set_nick(client_msg.substr(5, (client_msg.length() - 5)));
+			irc_log(DEBUG, "nick is set to");
+			std::cout << user.get_nick() << std::endl;
+		}
 	}
 	else if (client_msg.find("USER ") == 0)
 	{
 		user.set_user(client_msg.substr(5, client_msg.find(" ", 5) - 5));
 		irc_log(DEBUG, "user is set to");
 		std::cout << user.get_user() << std::endl;
+	}
+	if (user.get_nick().size() && user.get_user().size())
+	{
 		user.set_is_complete(true);
 		std::string	welcome = build_welcome(user);
 		std::cout << "about to send welcome: " << welcome << std::endl;
