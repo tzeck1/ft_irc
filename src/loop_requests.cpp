@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   loop_requests.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/19 14:50:24 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/21 15:26:37 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 #include <unistd.h>
 #include "User.hpp"
 
+/**
+ * @return a vector of the fds connected to be used for poll().
+*/
 std::vector<pollfd>	get_client_fds(std::vector<client> &clients)
 {
 	std::vector<pollfd> client_fds;
@@ -23,7 +26,7 @@ std::vector<pollfd>	get_client_fds(std::vector<client> &clients)
 	return (client_fds);
 }
 
-static void	init_poll(std::vector<client> clients, int fds_size)
+static void	init_poll(std::vector<client> &clients, int fds_size)
 {
 	std::vector<pollfd>	poll_fd = get_client_fds(clients);
 
@@ -33,6 +36,8 @@ static void	init_poll(std::vector<client> clients, int fds_size)
 		irc_log(CRITICAL, "poll() failed!");
 	else if (err == 0)
 		irc_log(CRITICAL, "poll() timed out!");
+	for (size i = 0; i < clients.size(); i++)
+		clients.begin()[i].first.revents = poll_fd[i].revents;//copying over changes
 }
 
 static void	accept_users(std::vector<client> &clients, int socket_d)
@@ -53,7 +58,7 @@ static void	accept_users(std::vector<client> &clients, int socket_d)
 		pollfd	new_pollfd;
 		new_pollfd.fd = new_fd;
 		new_pollfd.events = POLLIN;
-		new_pollfd.revents = 1;
+		// new_pollfd.revents = POLLIN;// not needed anymore i hope
 		User	new_user(client_addr.sin_addr.s_addr);
 		clients.push_back(client(new_pollfd, new_user));
 		irc_log(DEBUG, "Accepted a new user");
@@ -92,6 +97,8 @@ void	loop_requests(int socket_d)
 		accept_users(clients, socket_d);
 		for (size i = 0; i < clients.size(); i++)
 		{
+			// irc_log(DEBUG, "for loop iterator ");
+			// std::cout << i << " revents: " << clients[i].first.revents << " events: " << clients[i].first.events << " fd: " << clients[i].first.fd << std::endl;
 			if (clients[i].first.revents == 0) //skips user first time after accept
 				continue ;
 			if (clients[i].first.revents != POLLIN && clients[i].first.revents != (POLLIN | POLLHUP)) //POLLIN: incoming connection POLLIN|POLLHUP: disconnect by user
