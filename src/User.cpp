@@ -6,11 +6,12 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:14:58 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/21 14:10:57 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/21 17:11:43 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.hpp"
+#include "common.hpp"
 #include <sstream>
 
 User::User(void) : _is_complete(false) {}

@@ -3,25 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   handle_cmds.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/19 15:32:17 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/21 17:04:00 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.hpp"
 #include "User.hpp"
+#include <fstream>
+#include <unistd.h>
 
 static void	handle_cmd(std::vector<client> &clients, std::string msg, int i)
 {
 	std::string	reply;
 
+	irc_log(TRACE, msg.c_str());
 	if (msg.find("PING ") == 0)
 	{
 		reply = "PONG " + (std::string)SERVER_IP + "\r\n";
 		send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 	}
+	else if (msg.find("QUIT ") == 0)
+		close_connection(clients, i);
 	// else if (msg.find("QUIT "))
 	// if (msg.find("NICK "))
 }

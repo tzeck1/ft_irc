@@ -6,12 +6,14 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/17 14:07:18 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/21 17:04:24 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "User.hpp"
 #include "common.hpp"
 #include <sstream>
+#include <unistd.h>
 
 /**
  * 0 - quiet: 			No messages printed.
@@ -89,4 +91,14 @@ std::string	ip_itostr(in_addr_t ip_raw)
 		<< (ip_raw >> 16 & 0xff) << "."
 		<< (ip_raw >> 24 & 0xff);
 	return (ss.str());
+}
+
+/**
+ * close() fd of user and erase it from the vector.
+*/
+void	close_connection(std::vector<client> &clients, size i)
+{
+	if (close(clients[i].first.fd) == -1)
+		irc_log(CRITICAL, "Failed to close file descriptor");
+	clients.erase(clients.begin() + i);
 }

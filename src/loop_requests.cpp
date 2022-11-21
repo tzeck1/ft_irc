@@ -6,12 +6,11 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/21 15:26:37 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/21 17:12:20 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.hpp"
-#include <unistd.h>
 #include "User.hpp"
 
 /**
@@ -55,6 +54,7 @@ static void	accept_users(std::vector<client> &clients, int socket_d)
 				irc_log(CRITICAL, "accept() failed!");
 			break ; //else nothing more to accept
 		}
+		std::cout << "new fd for user is " << new_fd << std::endl;
 		pollfd	new_pollfd;
 		new_pollfd.fd = new_fd;
 		new_pollfd.events = POLLIN;
@@ -65,7 +65,7 @@ static void	accept_users(std::vector<client> &clients, int socket_d)
 	}
 }
 
-static std::string	receive_msg(int client_fd)
+static std::string	receive_msg(int client_fd, std::vector<client> &clients, size i)
 {
 	char	buffer[512];
 	int		err;
@@ -76,7 +76,7 @@ static std::string	receive_msg(int client_fd)
 	if (err < 0 && errno != EWOULDBLOCK)
 		irc_log(WARNING, "recv() failed");
 	if (err == 0) //TODO: should erase vector and 'close' fd
-		irc_log(CRITICAL, "connection closed by user"); //just here to avoid infinite loop
+		close_connection(clients, i);
 	std::cout << "buffer: " << buffer << std::endl;
 	return (buffer);
 }
@@ -109,7 +109,7 @@ void	loop_requests(int socket_d)
 			}
 			if (i != 0) //if not socket_d
 			{
-				msg = receive_msg(clients[i].first.fd);
+				msg = receive_msg(clients[i].first.fd, clients, i);
 				std::cout << "msg received is: " << msg << std::endl;
 				if (msg.size() != 0)
 					parse_cmds(clients, msg, i);
