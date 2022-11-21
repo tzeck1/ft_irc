@@ -6,7 +6,7 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:14:58 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/21 17:11:43 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/21 17:28:13 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,11 @@ std::string	User::get_ip(void) const
 	return (_ip);
 }
 
+// std::string	User::get_msg(void) const
+// {
+// 	return (_msg);
+// }
+
 bool	User::get_is_complete(void) const
 {
 	return (_is_complete);
@@ -119,6 +124,11 @@ void				User::set_ip(const std::string ip)
 {
 	_ip = ip;
 }
+
+// void				User::set_msg(const std::string msg)
+// {
+// 	_msg = _msg;
+// }
 
 void				User::set_is_complete(const bool is_complete)
 {
