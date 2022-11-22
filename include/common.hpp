@@ -1,25 +1,62 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   common.hpp                                         :+:      :+:    :+:   */
+/*   common.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/02 10:19:35 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/22 12:49:14 by btenzlin         ###   ########.fr       */
+/*   Created: 2022/11/21 17:06:43 by mmeising          #+#    #+#             */
+/*   Updated: 2022/11/22 14:54:40 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "base.hpp"
+/*------	INCLUDES	-----*/
+#include <sys/socket.h> //socket functions
+#include <netinet/in.h> //sockaddr_in struct
+#include <poll.h> // poll function and pollfd struct
 
-/*------	FUNCTIONS	-----*/
-int			init_server(void);
-void		loop_requests(int socket_d);
+#include <string> // string functions
+#include <iostream> // output
+#include <fcntl.h>
+#include <vector>
+#include <unistd.h>
 
-std::string	ip_itostr(in_addr_t ip_raw);
+/*------	MACROS	-----*/
+#define SERVER_PORT 420
+#define BACKLOG		32 // how many connections can queue up (listen function)
+// #define SERVER_IP	"172.17.252.83"
+#define SERVER_IP	"10.11.4.27"
+#define TIMEOUT		(3 * 60 * 1000) //timeout for poll
 
-t_err		irc_log(enum e_err type, std::string msg);
-void		server_error(std::string err);
-std::string	get_nick_from_msg(std::string msg);
+# define RED			"\033[31m"
+# define RED_BOLD		"\033[1;31m"
+# define GREEN			"\033[32m"
+# define GREEN_BOLD		"\033[1;32m"
+# define BLUE			"\033[34m"
+# define BLUE_BOLD		"\033[1;34m"
+# define PURPLE			"\033[35m"
+# define PURPLE_BOLD	"\033[1;35m"
+# define YELLOW			"\033[33m"
+# define YELLOW_BOLD	"\033[1;33m"
+# define RESET			"\033[0m"
+
+/*------	TYPEDEFS	-----*/
+
+/**
+ * @param CRITICAL Critical errors for which the only solution is to exit the program.
+ * @param ERROR Non-critical errors which may run fine but some parts may break.
+ * @param WARNING Unexpected situation which is not technically an error but could cause one.
+ * @param INFO General info about the program.
+ * @param DEBUG Detailed info about the state of the program.
+ * @param TRACE Low-level info like function entry/exit points.
+*/
+typedef enum e_err {
+	CRITICAL = 0,
+	ERROR = 1,
+	WARNING = 2,
+	INFO = 3,
+	DEBUG = 4,
+	TRACE = 5
+}	t_err;

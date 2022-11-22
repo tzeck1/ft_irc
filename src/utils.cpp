@@ -6,11 +6,11 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/22 12:48:35 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/22 15:09:19 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "User.hpp"
+#include "user.hpp"
 #include "common.hpp"
 #include <sstream>
 #include <unistd.h>
@@ -58,8 +58,8 @@ t_err	irc_log(enum e_err type, std::string msg)
 			break;
 		case DEBUG:
 			if (VERBOSITY >= 2)
-				std::cerr	<< BLUE_BOLD << "DEBUG: " << RESET
-							<< BLUE << msg << RESET << std::endl;
+				std::cerr	<< PURPLE_BOLD << "DEBUG: " << RESET
+							<< PURPLE << msg << RESET << std::endl;
 			break;
 		case TRACE:
 			if (VERBOSITY == 3)
@@ -114,4 +114,42 @@ std::string	get_nick_from_msg(std::string msg)
 	for (; msg[i] != ' '; i++)
 		nick.push_back(msg[i]);
 	return (nick);
+}
+
+/*--------------	BUILD REPLIES	-------------*/
+
+std::string	build_nick_in_use(User user)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 433 * " << user.get_nick()
+		<< " :Nickname is already in use." << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_no_such_nick(std::string nick)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 401 " << nick
+		<< " :No such nick/channel." << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_welcome(User user)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 001 " << user.get_nick()
+		<< " :Welcome to our ft_irc " << user.get_nick()
+		<< "!" << user.get_user() << "@" << user.get_ip() << "\r\n";
+	return (ss.str());
+}
+
+std::string			build_prefix(User &user)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << user.get_nick() << "!" << user.get_user() << "@" << user.get_ip();
+	return (ss.str());
 }

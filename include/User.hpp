@@ -6,13 +6,13 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:11:31 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/22 13:02:11 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/22 15:02:34 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-# include "base.hpp"
+# include "common.hpp"
 
 class	User {
 
@@ -53,5 +53,3 @@ typedef std::vector<client>::size_type size;
 void		init_user(User &user, std::vector<client> &clients, std::string client_msg, int fd);
 void		close_connection(std::vector<client> &clients, size i);
 void		parse_cmds(std::vector<client> &clients, std::string &msg, int i);
-std::string	build_prefix(User &user);
-std::string	build_no_such_nick(std::string nick);

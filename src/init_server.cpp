@@ -6,11 +6,11 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:39:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/15 17:49:51 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/22 14:58:12 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "common.hpp"
+#include "prototypes.hpp"
 
 int	init_server(void)
 {

@@ -6,12 +6,12 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/22 11:19:47 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/22 14:58:12 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "common.hpp"
-#include "User.hpp"
+#include "prototypes.hpp"
+#include "user.hpp"
 
 /**
  * @return a vector of the fds connected to be used for poll().
@@ -54,16 +54,13 @@ static void	accept_users(std::vector<client> &clients, int socket_d)
 				irc_log(CRITICAL, "accept() failed!");
 			break ; //else nothing more to accept
 		}
-		std::cout << "new fd for user is " << new_fd << std::endl;
 		pollfd	new_pollfd;
 		new_pollfd.fd = new_fd;
 		new_pollfd.events = POLLIN;
-		// new_pollfd.revents = POLLIN;// not needed anymore i hope
 		User	new_user;
 		new_user.set_ip(ip_itostr(client_addr.sin_addr.s_addr));
 		clients.push_back(client(new_pollfd, new_user));
-		// new_user.get_user();
-		irc_log(DEBUG, "Accepted a new user");
+		irc_log(TRACE, "Accepted a new user");
 	}
 }
 
@@ -79,7 +76,6 @@ static std::string	receive_msg(int client_fd, std::vector<client> &clients, size
 		irc_log(WARNING, "recv() failed");
 	if (err == 0) //TODO: should erase vector and 'close' fd
 		close_connection(clients, i);
-	std::cout << "buffer: " << buffer << std::endl;
 	return (buffer);
 }
 
@@ -98,8 +94,6 @@ void	loop_requests(int socket_d)
 		accept_users(clients, socket_d);
 		for (size i = 0; i < clients.size(); i++)
 		{
-			// irc_log(DEBUG, "for loop iterator ");
-			// std::cout << i << " revents: " << clients[i].first.revents << " events: " << clients[i].first.events << " fd: " << clients[i].first.fd << std::endl;
 			if (clients[i].first.revents == 0) //skips user first time after accept
 				continue ;
 			if (clients[i].first.revents != POLLIN && clients[i].first.revents != (POLLIN | POLLHUP)) //POLLIN: incoming connection POLLIN|POLLHUP: disconnect by user
@@ -111,12 +105,9 @@ void	loop_requests(int socket_d)
 			if (i != 0) //if not socket_d
 			{
 				clients[i].second.msg += receive_msg(clients[i].first.fd, clients, i);//close only in here when receiving len of 0
-				// std::cout << "msg in user is: " << clients[i].second.msg << std::endl;
 				if (i < clients.size() && clients[i].second.msg.find("\r\n") != std::string::npos)
 					parse_cmds(clients, clients[i].second.msg, i);//no close in here cause QUIT is just a message at first
 			}
-			std::cout << "main loop with iterator " << i << std::endl;
 		}
-		irc_log(TRACE, "after the main loop");
 	}
 }
