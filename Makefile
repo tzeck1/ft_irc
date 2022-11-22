@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+         #
+#    By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/15 13:05:00 by mmeising         ###   ########.fr        #
+#    Updated: 2022/11/22 15:07:18 by btenzlin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,8 @@ NAME = ./ircserv
 # PATHS
 OBJ_PATH = ./.obj/
 # SOURCES
-SRC =	main.cpp init_server.cpp utils.cpp loop_requests.cpp
+SRC =	main.cpp init_server.cpp utils.cpp loop_requests.cpp handle_cmds.cpp \
+		user.cpp
 
 # OBJECTS
 OBJ :=$(addprefix $(OBJ_PATH), $(SRC:.cpp=.o))
@@ -33,6 +34,7 @@ INC = -I ./include
 
 # RULES
 all: $(NAME)
+	$(NAME)
 
 $(NAME): $(OBJ)
 	@echo $(Y)Compiling [$(OBJ)]

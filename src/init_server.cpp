@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   init_server.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:39:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/14 10:43:21 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/22 14:58:12 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "common.hpp"
+#include "prototypes.hpp"
 
 int	init_server(void)
 {
@@ -26,12 +26,13 @@ int	init_server(void)
 		server_error("setsockopt() failed!");
 	
 	/*-----	set socket to non-blocking	-----*/
-	err = fcntl(socket_d, F_SETFD, O_NONBLOCK); // set nonblocking flag to socket_d
+	err = fcntl(socket_d, F_SETFL, O_NONBLOCK); // set nonblocking flag to socket_d
 	if (err < 0)
 		server_error("fcntl() failed!");
 
 	/*-----	assigne address to socket	-----*/
 	struct sockaddr_in addr;
+	std::memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET; // set to ipv4
 	/*	htonl and htons set network byte order so protocoll can recieve/send stuff	*/
 	addr.sin_addr.s_addr = htonl(INADDR_ANY); // set address of socket to non-specific

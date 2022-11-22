@@ -1,0 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   prototypes.hpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/22 15:13:40 by btenzlin          #+#    #+#             */
+/*   Updated: 2022/11/22 15:13:44 by btenzlin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#pragma once
+
+#include "common.hpp"
+#include "user.hpp"
+
+/*------	FUNCTIONS	-----*/
+int			init_server(void);
+void		loop_requests(int socket_d);
+
+std::string	ip_itostr(in_addr_t ip_raw);
+
+t_err		irc_log(enum e_err type, std::string msg);
+void		server_error(std::string err);
+std::string	get_nick_from_msg(std::string msg);
+std::string	build_prefix(User &user);
+std::string	build_no_such_nick(std::string nick);
+std::string	build_nick_in_use(User user);
+std::string	build_welcome(User user);
