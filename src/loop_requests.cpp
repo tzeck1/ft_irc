@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   loop_requests.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/21 18:56:22 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/22 11:19:47 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,10 @@ static void	accept_users(std::vector<client> &clients, int socket_d)
 		new_pollfd.fd = new_fd;
 		new_pollfd.events = POLLIN;
 		// new_pollfd.revents = POLLIN;// not needed anymore i hope
-		User	new_user(client_addr.sin_addr.s_addr);
+		User	new_user;
+		new_user.set_ip(ip_itostr(client_addr.sin_addr.s_addr));
 		clients.push_back(client(new_pollfd, new_user));
+		// new_user.get_user();
 		irc_log(DEBUG, "Accepted a new user");
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/21 17:04:24 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/22 12:48:35 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,4 +101,17 @@ void	close_connection(std::vector<client> &clients, size i)
 	if (close(clients[i].first.fd) == -1)
 		irc_log(CRITICAL, "Failed to close file descriptor");
 	clients.erase(clients.begin() + i);
+}
+
+std::string	get_nick_from_msg(std::string msg)
+{
+	int	i = 0;
+	std::string	nick;
+
+	for (; msg[i] != ' '; i++)
+		continue ;
+	i++;
+	for (; msg[i] != ' '; i++)
+		nick.push_back(msg[i]);
+	return (nick);
 }

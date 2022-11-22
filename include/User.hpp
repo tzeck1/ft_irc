@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:11:31 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/21 17:32:08 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/22 13:02:11 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ private:
 typedef std::pair<pollfd, User>	client;	
 typedef std::vector<client>::size_type size;
 
-void	init_user(User &user, std::vector<client> &clients, std::string client_msg, int fd);
-void	close_connection(std::vector<client> &clients, size i);
-void	parse_cmds(std::vector<client> &clients, std::string &msg, int i);
+void		init_user(User &user, std::vector<client> &clients, std::string client_msg, int fd);
+void		close_connection(std::vector<client> &clients, size i);
+void		parse_cmds(std::vector<client> &clients, std::string &msg, int i);
+std::string	build_prefix(User &user);
+std::string	build_no_such_nick(std::string nick);

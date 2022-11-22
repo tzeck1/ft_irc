@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:14:58 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/21 17:28:13 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/22 13:01:53 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,15 @@ static std::string	build_nick_in_use(User user)
 	return (ss.str());
 }
 
+std::string	build_no_such_nick(std::string nick)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 401 " << nick
+		<< " :No such nick/channel." << "\r\n";
+	return (ss.str());
+}
+
 static std::string	build_welcome(User user)
 {
 	std::stringstream	ss;
@@ -34,6 +43,14 @@ static std::string	build_welcome(User user)
 	ss	<< ":" << SERVER_IP << " 001 " << user.get_nick()
 		<< " :Welcome to our ft_irc " << user.get_nick()
 		<< "!" << user.get_user() << "@" << user.get_ip() << "\r\n";
+	return (ss.str());
+}
+
+std::string			build_prefix(User &user)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << user.get_nick() << "!" << user.get_user() << "@" << user.get_ip();
 	return (ss.str());
 }
 
