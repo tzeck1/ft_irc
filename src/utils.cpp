@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/23 11:16:51 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/23 13:20:53 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,18 @@ void	close_connection(std::vector<client> &clients, size i)
 	clients.erase(clients.begin() + i);
 }
 
+static std::string	get_names(channel_type channels, std::string ch_name)
+{
+	std::string	names;
+
+	channel_type::iterator	it = channels.find(ch_name);
+	std::vector<User>::iterator	ite = (*it).second.begin();
+	for (; ite != (*it).second.end() - 1; ite++)
+		names += (*ite).get_nick() + " ";
+	names += (*ite).get_nick();
+	return (names);
+}
+
 std::string	get_nick_from_msg(std::string msg)
 {
 	int	i = 0;
@@ -150,6 +162,18 @@ std::string	build_bad_pwd(std::string pwd)
 
 	ss	<< ":" << SERVER_IP << " 464 " << pwd
 		<< " :Incorrect server password." << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_users_in_channel(channel_type &channels, std::string ch_name, User &user)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 353 " << user.get_nick()
+		<< " = #" << ch_name << " :" << get_names(channels, ch_name) << "\r\n";
+	
+	ss	<< ":" << SERVER_IP << " 366 " << user.get_nick()
+		<< " #" << " :End of NAMES list." << "\r\n";
 	return (ss.str());
 }
 

@@ -6,7 +6,7 @@
 /*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 15:13:40 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/23 10:58:55 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/23 13:24:14 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,3 +30,4 @@ std::string	build_no_such_nick(std::string nick);
 std::string	build_nick_in_use(User user);
 std::string	build_welcome(User user);
 std::string	build_bad_pwd(std::string pwd);
+std::string	build_users_in_channel(channel_type &channels, std::string ch_name, User &user);

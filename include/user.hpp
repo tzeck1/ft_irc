@@ -6,7 +6,7 @@
 /*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:11:31 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/23 11:12:23 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/23 12:56:54 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,11 @@ class	User
 
 };
 
-typedef std::pair<pollfd, User>	client;	
-typedef std::vector<client>::size_type size;
+typedef std::pair<pollfd, User>							client;
+typedef std::pair< std::string, std::vector<User> >		channel;
+typedef std::vector<client>::size_type					size;
+typedef std::map< std::string, std::vector<User> >		channel_type;
 
 void		init_user(User &user, std::vector<client> &clients, std::string client_msg, int fd);
 void		close_connection(std::vector<client> &clients, size i);
-void		parse_cmds(std::vector<client> &clients, std::string &msg, int i, std::string pwd);
+void		parse_cmds(std::vector<client> &clients, channel_type &channels, std::string &msg, int i, std::string pwd);

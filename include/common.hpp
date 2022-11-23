@@ -21,6 +21,7 @@
 #include <iostream> // output
 #include <fcntl.h>
 #include <vector>
+#include <map>
 #include <unistd.h>
 #include <cstdlib> // for atoi
 #include <cctype> // for isalnum
@@ -54,7 +55,8 @@
  * @param DEBUG Detailed info about the state of the program.
  * @param TRACE Low-level info like function entry/exit points.
 */
-typedef enum e_err {
+typedef enum e_err
+{
 	CRITICAL = 0,
 	ERROR = 1,
 	WARNING = 2,

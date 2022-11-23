@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_cmds.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/23 12:19:59 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/23 13:23:50 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void	auth_user(std::vector<client> &clients, std::string input, std::stri
 	}
 }
 
-static void	handle_cmd(std::vector<client> &clients, std::string &msg, int i)
+static void	handle_cmd(std::vector<client> &clients, channel_type &channels, std::string &msg, int i)
 {
 	std::string	reply;
 
@@ -49,12 +49,32 @@ static void	handle_cmd(std::vector<client> &clients, std::string &msg, int i)
 		reply = build_no_such_nick(get_nick_from_msg(msg));
 		send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 	}
+	else if (msg.find("JOIN #") == 0)
+	{
+		std::string ch_name = msg.substr(6);
+		channel_type::iterator it = channels.find(ch_name);
+		
+		if (it == channels.end()) // create channel
+		{
+			std::vector<User> ch_users;
+
+			ch_users.push_back(clients[i].second);
+			channel new_ch(ch_name, ch_users);
+			reply = build_prefix(clients[i].second) + " " + msg;
+			send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
+			reply = build_users_in_channel(channels, ch_name, clients[i].second);
+			send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
+		}
+		else // add user to channel
+		{
+			
+		}
+	}
 	// else if (msg.find("QUIT ") == 0)
 		//need to send msg to all members of same channel
-	// if (msg.find("NICK "))
 }
 
-void	parse_cmds(std::vector<client> &clients, std::string &msg, int i, std::string pwd)
+void	parse_cmds(std::vector<client> &clients, channel_type &channels, std::string &msg, int i, std::string pwd)
 {
 	std::string	tmp;
 
@@ -74,6 +94,6 @@ void	parse_cmds(std::vector<client> &clients, std::string &msg, int i, std::stri
 				init_user(clients[i].second, clients, tmp, clients[i].first.fd);
 		}
 		else
-			handle_cmd(clients, tmp, i);
+			handle_cmd(clients, channels, tmp, i);
 	}
 }
