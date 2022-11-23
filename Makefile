@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+         #
+#    By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/23 09:37:15 by tzeck            ###   ########.fr        #
+#    Updated: 2022/11/23 11:28:39 by btenzlin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ INC = -I ./include
 
 # RULES
 all: $(NAME)
-	$(NAME) 420 hello
+	$(NAME) 420 test
 
 $(NAME): $(OBJ)
 	@echo $(Y)Compiling [$(OBJ)]

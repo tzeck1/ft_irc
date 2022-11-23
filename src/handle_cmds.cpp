@@ -3,15 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   handle_cmds.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/23 11:11:21 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/23 12:19:59 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "prototypes.hpp"
 #include "user.hpp"
+
+static void	auth_user(std::vector<client> &clients, std::string input, std::string pwd, size i)
+{
+	if (check_pwd(input, pwd) == true)
+		clients[i].second.set_auth(true);
+	else
+	{
+		std::string reply = build_bad_pwd(input.substr(5, input.size() - 5));
+		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
+	}
+}
 
 static void	handle_cmd(std::vector<client> &clients, std::string &msg, int i)
 {
@@ -57,14 +68,9 @@ void	parse_cmds(std::vector<client> &clients, std::string &msg, int i, std::stri
 		msg.erase(0, pos + 2);
 		if (clients[i].second.get_is_complete() == false)
 		{
-			if (tmp.find("PASS ") == 0 && check_pwd(tmp, pwd) == true)
-				clients[i].second.set_auth(true);
-			else
-			{
-				std::string reply = build_bad_pwd(pwd);
-				send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
-			}
-			if (clients[i].second.get_auth() == true)
+			if (tmp.find("PASS ") == 0)
+				auth_user(clients, tmp, pwd, i);
+			else if (clients[i].second.get_auth() == true)
 				init_user(clients[i].second, clients, tmp, clients[i].first.fd);
 		}
 		else
