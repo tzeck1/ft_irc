@@ -22,9 +22,11 @@
 #include <fcntl.h>
 #include <vector>
 #include <unistd.h>
+#include <cstdlib> // for atoi
+#include <cctype> // for isalnum
 
 /*------	MACROS	-----*/
-#define SERVER_PORT 420
+// #define SERVER_PORT 420
 #define BACKLOG		32 // how many connections can queue up (listen function)
 // #define SERVER_IP	"172.17.252.83"
 #define SERVER_IP	"10.11.4.27"

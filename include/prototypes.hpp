@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prototypes.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 15:13:40 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/22 15:13:44 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/23 09:27:42 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "user.hpp"
 
 /*------	FUNCTIONS	-----*/
-int			init_server(void);
+int			init_server(int port);
 void		loop_requests(int socket_d);
 
 std::string	ip_itostr(in_addr_t ip_raw);

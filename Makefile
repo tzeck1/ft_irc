@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+         #
+#    By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/22 15:07:18 by btenzlin         ###   ########.fr        #
+#    Updated: 2022/11/23 09:37:15 by tzeck            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,8 @@ R = "\033[31m"
 G = "\033[32m"
 B = "\033[34m"
 X = "\033[0m"
+UP = "\033[A"
+CUT = "\033[K"
 # EXECUTABLE
 NAME = ./ircserv
 # PATHS
@@ -34,19 +36,27 @@ INC = -I ./include
 
 # RULES
 all: $(NAME)
-	$(NAME)
+	$(NAME) 420 hello
 
 $(NAME): $(OBJ)
 	@echo $(Y)Compiling [$(OBJ)]
+	@sleep 0.1
+	@printf $(UP)$(CUT)
 	@echo into [$(NAME)]...$(X)
+	@sleep 0.1
+	@printf $(UP)$(CUT)
 	@$(CXX) $(CXXFLAGS) $^ $(INC) -o $(NAME)
 	@echo $(G)Finished [$(NAME)]$(X)
 
 $(OBJ_PATH)%.o: %.cpp
 	@echo $(Y)Compiling [$@]...$(X)
 	@mkdir -p .obj
+	@sleep 0.1
+	@printf $(UP)$(CUT)
 	@$(CXX) $(CXXFLAGS) -MMD -MP -c $< $(INC) -o $@
 	@echo $(G)Finished [$@]$(X)
+	@sleep 0.1
+	@printf $(UP)$(CUT)
 
 clean:
 	@if [ -d "$(OBJ_PATH)" ]; then \

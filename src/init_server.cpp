@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   init_server.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:39:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/22 14:58:12 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/23 09:27:31 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "prototypes.hpp"
 
-int	init_server(void)
+int	init_server(int port)
 {
 	/*-----	create socket	-----*/
 	int	socket_d = socket(AF_INET, SOCK_STREAM, 0); //socket discriptor
@@ -36,7 +36,7 @@ int	init_server(void)
 	addr.sin_family = AF_INET; // set to ipv4
 	/*	htonl and htons set network byte order so protocoll can recieve/send stuff	*/
 	addr.sin_addr.s_addr = htonl(INADDR_ANY); // set address of socket to non-specific
-	addr.sin_port = htons(SERVER_PORT); // set socket to port (420)
+	addr.sin_port = htons(port); // set socket to port (420)
 	err = bind(socket_d, (struct sockaddr *)&addr, sizeof(addr));
 	if (err == -1)
 		server_error("bind() failed!");
