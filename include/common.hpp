@@ -17,7 +17,7 @@
 #include <netinet/in.h> //sockaddr_in struct
 #include <poll.h> // poll function and pollfd struct
 
-#include <string> // string functions
+#include <string> // string function
 #include <iostream> // output
 #include <fcntl.h>
 #include <vector>
@@ -30,7 +30,8 @@
 // #define SERVER_PORT 420
 #define BACKLOG		32 // how many connections can queue up (listen function)
 // #define SERVER_IP	"172.17.252.83"
-#define SERVER_IP	"10.11.4.27"
+#define SERVER_IP	"irc.42.com"
+#define OP_PWD		"test"
 #define TIMEOUT		(3 * 60 * 1000) //timeout for poll
 
 # define RED			"\033[31m"

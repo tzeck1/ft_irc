@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/23 13:54:43 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/23 19:03:49 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,13 @@ void	close_connection(std::vector<client> &clients, size i)
 	if (close(clients[i].first.fd) == -1)
 		irc_log(CRITICAL, "Failed to close file descriptor");
 	clients.erase(clients.begin() + i);
+}
+
+void	close_connection(std::vector<client> &clients, client_type::iterator it)
+{
+	if (close((*it).second.get_fd()) == -1)
+		irc_log(CRITICAL, "Failed to close file descriptor");
+	clients.erase(it);
 }
 
 static std::string	get_names(channel_type channels, std::string ch_name)

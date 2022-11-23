@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_cmds.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/23 17:51:57 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/23 19:14:21 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,50 @@ static void	handle_cmd(std::vector<client> &clients, channel_type &channels, std
 			irc_log(WARNING, "sending channel message failed");
 			reply = build_no_such_nick(ch_name); //needs # before channel name
 			send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
+		}
+	}
+	else if (msg.find("OPER ") == 0)
+	{
+		std::string nick = msg.substr(5, (msg.find(" ", 5) - 5));
+		std::string op_pwd = msg.substr((msg.find(" ", 5) + 1));
+
+		if (op_pwd != OP_PWD)
+			irc_log(ERROR, "wrong oper password!");
+		else
+		{
+			client_type::iterator it = clients.begin();
+			for (; it != clients.end(); it++)
+			{
+				if ((*it).second.get_nick() == nick)
+					break ;
+			}
+			if (it == clients.end())
+				irc_log(ERROR, "nick for oper cmd not found!");
+			else
+				(*it).second.set_op(true);
+		}
+	}
+	else if (msg.find("KILL ") == 0)
+	{
+		std::string nick = msg.substr(5, (msg.find(" ", 5) - 5));
+		irc_log(INFO, nick);
+		// std::string reason = msg.substr((msg.find(" ", 6)));
+		std::string reason = msg.substr((msg.find(" ", 5) + 1));
+		irc_log(INFO, reason);
+
+		if (clients[i].second.get_op() == false)
+			irc_log(ERROR, "not a op (kill cmd)");
+		else
+		{
+			client_type::iterator it = clients.begin();
+			for (; it != clients.end(); it++)
+			{
+				if ((*it).second.get_nick() == nick)
+				{
+					close_connection(clients, it);
+					break ;
+				}
+			}
 		}
 	}
 	// else if (msg.find("QUIT ") == 0)

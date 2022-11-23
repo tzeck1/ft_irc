@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:14:58 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/23 14:10:53 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/23 18:32:52 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "prototypes.hpp"
 #include <sstream>
 
-User::User(void) : _is_complete(false), _auth(false) {}
+User::User(void) : _is_complete(false), _auth(false), _op(false) {}
 User::User(std::string str) : _nick(str), _is_complete(false) {}
 // User::User(in_addr_t raw_ip) : _ip(ip_itostr(raw_ip)), _is_complete(false) {}
 
@@ -79,6 +79,11 @@ bool	User::get_auth(void) const
 	return (_auth);
 }
 
+bool	User::get_op(void) const
+{
+	return (_op);
+}
+
 // std::string	User::get_msg(void) const
 // {
 // 	return (_msg);
@@ -114,6 +119,11 @@ void				User::set_fd(const int fd)
 void				User::set_auth(const bool auth)
 {
 	_auth = auth;
+}
+
+void				User::set_op(const bool op)
+{
+	_op = op;
 }
 
 // void				User::set_msg(const std::string msg)
