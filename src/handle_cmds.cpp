@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_cmds.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/22 15:06:30 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/23 11:11:21 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static void	handle_cmd(std::vector<client> &clients, std::string &msg, int i)
 	// if (msg.find("NICK "))
 }
 
-void	parse_cmds(std::vector<client> &clients, std::string &msg, int i)
+void	parse_cmds(std::vector<client> &clients, std::string &msg, int i, std::string pwd)
 {
 	std::string	tmp;
 
@@ -56,7 +56,17 @@ void	parse_cmds(std::vector<client> &clients, std::string &msg, int i)
 		tmp = msg.substr(0, pos);
 		msg.erase(0, pos + 2);
 		if (clients[i].second.get_is_complete() == false)
-			init_user(clients[i].second, clients, tmp, clients[i].first.fd);
+		{
+			if (tmp.find("PASS ") == 0 && check_pwd(tmp, pwd) == true)
+				clients[i].second.set_auth(true);
+			else
+			{
+				std::string reply = build_bad_pwd(pwd);
+				send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
+			}
+			if (clients[i].second.get_auth() == true)
+				init_user(clients[i].second, clients, tmp, clients[i].first.fd);
+		}
 		else
 			handle_cmd(clients, tmp, i);
 	}

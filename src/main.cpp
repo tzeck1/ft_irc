@@ -6,7 +6,7 @@
 /*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 10:29:09 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/23 09:38:09 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/23 10:49:13 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,6 @@ int	main(int argc, char **argv)
 	std::string pwd = get_pwd(argv[2]);
 	int socket_d = init_server(port);
 	irc_log(INFO, "Server setup complete");
-	loop_requests(socket_d);
+	loop_requests(socket_d, pwd);
 	return (EXIT_SUCCESS);
 }

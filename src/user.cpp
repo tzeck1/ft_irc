@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:14:58 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/22 15:02:20 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/23 11:13:04 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,11 @@ std::string	User::get_ip(void) const
 	return (_ip);
 }
 
+bool	User::get_auth(void) const
+{
+	return (_auth);
+}
+
 // std::string	User::get_msg(void) const
 // {
 // 	return (_msg);
@@ -94,6 +99,11 @@ void				User::set_user(const std::string user)
 void				User::set_ip(const std::string ip)
 {
 	_ip = ip;
+}
+
+void				User::set_auth(const bool auth)
+{
+	_auth = auth;
 }
 
 // void				User::set_msg(const std::string msg)

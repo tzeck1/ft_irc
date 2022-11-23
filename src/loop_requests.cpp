@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   loop_requests.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/22 14:58:12 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/23 10:50:24 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,11 @@ static std::string	receive_msg(int client_fd, std::vector<client> &clients, size
 	return (buffer);
 }
 
-void	loop_requests(int socket_d)
+void	loop_requests(int socket_d, std::string pwd)
 {
 	std::vector<client>	clients;
 	User				server("server");
-	pollfd	socket;
+	pollfd				socket;
 
 	socket.fd = socket_d; // open file
 	socket.events = POLLIN; // requestet events (POLLIN = there is data to be read)
@@ -106,7 +106,7 @@ void	loop_requests(int socket_d)
 			{
 				clients[i].second.msg += receive_msg(clients[i].first.fd, clients, i);//close only in here when receiving len of 0
 				if (i < clients.size() && clients[i].second.msg.find("\r\n") != std::string::npos)
-					parse_cmds(clients, clients[i].second.msg, i);//no close in here cause QUIT is just a message at first
+					parse_cmds(clients, clients[i].second.msg, i, pwd);//no close in here cause QUIT is just a message at first
 			}
 		}
 	}

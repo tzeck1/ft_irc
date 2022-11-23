@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/22 15:09:19 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/23 10:58:43 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,14 @@ std::string	get_nick_from_msg(std::string msg)
 	return (nick);
 }
 
+bool	check_pwd(std::string input, std::string pwd)
+{
+	if (input.substr(5, input.size() - 5) == pwd)
+		return (true);
+	else
+		return (false);
+}
+
 /*--------------	BUILD REPLIES	-------------*/
 
 std::string	build_nick_in_use(User user)
@@ -133,6 +141,15 @@ std::string	build_no_such_nick(std::string nick)
 
 	ss	<< ":" << SERVER_IP << " 401 " << nick
 		<< " :No such nick/channel." << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_bad_pwd(std::string pwd)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 464 " << pwd
+		<< " :Incorrect server password." << "\r\n";
 	return (ss.str());
 }
 
