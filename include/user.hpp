@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:11:31 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/23 12:56:54 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/23 14:03:41 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class	User
 		std::string	get_nick(void) const;
 		std::string	get_user(void) const;
 		std::string	get_ip(void) const;
+		int			get_fd(void) const;
 		bool		get_auth(void) const;
 		
 		//  std::string	get_msg(void) const;
@@ -39,6 +40,7 @@ class	User
 		void				set_nick(const std::string nick);
 		void				set_user(const std::string user);
 		void				set_ip(const std::string ip);
+		void				set_fd(int fd);
 		void				set_auth(const bool auth);
 		// void				set_msg(const std::string msg);
 		void				set_is_complete(const bool is_complete);
@@ -48,6 +50,7 @@ class	User
 		std::string		_nick;
 		std::string		_user;
 		std::string		_ip;
+		int				_fd;
 		bool			_is_complete;
 		bool			_auth;
 

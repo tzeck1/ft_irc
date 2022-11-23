@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_cmds.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/23 13:23:50 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/23 15:40:04 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,30 @@ static void	handle_cmd(std::vector<client> &clients, channel_type &channels, std
 		reply = "PONG " + (std::string)SERVER_IP + "\r\n";
 		send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 	}
+	else if (msg.find("PRIVMSG #") == 0)
+	{
+		std::string				ch_name = msg.substr(9, (msg.find(" ", 9) - 9));
+		channel_type::iterator	it = channels.find(ch_name);
+		
+		if (it != channels.end()) // channel found
+		{
+			std::vector<User>	users = (*it).second;
+			std::vector<User>::iterator	ite = users.begin();
+			for (; ite != users.end(); ite++)
+			{
+				if (clients[i].second.get_nick() == (*ite).get_nick())
+					continue ;
+				reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
+				send((*ite).get_fd(), reply.c_str(), reply.length(), 0);
+			}
+		}
+		else
+		{
+			irc_log(WARNING, "sending channel message failed");
+			reply = build_no_such_nick(ch_name); //needs # before channel name
+			send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
+		}
+	}
 	else if (msg.find("PRIVMSG ") == 0)
 	{
 		for (std::vector<client>::iterator it = clients.begin(); it != clients.end(); it++)
@@ -60,14 +84,59 @@ static void	handle_cmd(std::vector<client> &clients, channel_type &channels, std
 
 			ch_users.push_back(clients[i].second);
 			channel new_ch(ch_name, ch_users);
-			reply = build_prefix(clients[i].second) + " " + msg;
-			send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
-			reply = build_users_in_channel(channels, ch_name, clients[i].second);
+			channels.insert(new_ch);
+			reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
 			send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 		}
 		else // add user to channel
 		{
-			
+			// irc_log(DEBUG, "channel exists");
+			(*it).second.push_back(clients[i].second);
+
+			std::vector<User>	users = (*it).second;
+			std::vector<User>::iterator	ite = users.begin();
+			for (; ite != users.end(); ite++)
+			{
+				reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
+				// irc_log(DEBUG, reply);
+				send((*ite).get_fd(), reply.c_str(), reply.length(), 0);
+			}
+		}
+		reply = build_users_in_channel(channels, ch_name, clients[i].second);
+		send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
+	}
+	else if (msg.find("PART ") == 0)
+	{
+		std::string				ch_name = msg.substr(6, (msg.find(" ", 6) - 6));
+		channel_type::iterator	it = channels.find(ch_name);
+		
+		if (it != channels.end()) // channel found
+		{
+			std::vector<User>	users = (*it).second;
+			irc_log(DEBUG, (*it).first);
+			std::vector<User>::iterator	ite = users.begin();
+			for (; ite != users.end(); ite++)
+			{
+				if (clients[i].second.get_nick() == (*ite).get_nick())
+				{
+					std::cout << "address of ite: " << ite.base() << std::endl;
+					(*it).second.erase(ite);
+					break ;
+				}
+			}
+			for (ite = users.begin(); ite != users.end(); ite++)
+			{
+				// if (clients[i].second.get_nick() == (*ite).get_nick())
+				// 	continue ;
+				reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
+				send((*ite).get_fd(), reply.c_str(), reply.length(), 0);
+			}
+		}
+		else
+		{
+			irc_log(WARNING, "sending channel message failed");
+			reply = build_no_such_nick(ch_name); //needs # before channel name
+			send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 		}
 	}
 	// else if (msg.find("QUIT ") == 0)

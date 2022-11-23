@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/23 13:20:53 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/23 13:54:43 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,8 +108,9 @@ static std::string	get_names(channel_type channels, std::string ch_name)
 	std::string	names;
 
 	channel_type::iterator	it = channels.find(ch_name);
-	std::vector<User>::iterator	ite = (*it).second.begin();
-	for (; ite != (*it).second.end() - 1; ite++)
+	std::vector<User>	users = (*it).second;
+	std::vector<User>::iterator	ite = users.begin();
+	for (; ite != users.end() - 1; ite++)
 		names += (*ite).get_nick() + " ";
 	names += (*ite).get_nick();
 	return (names);
@@ -173,7 +174,8 @@ std::string	build_users_in_channel(channel_type &channels, std::string ch_name, 
 		<< " = #" << ch_name << " :" << get_names(channels, ch_name) << "\r\n";
 	
 	ss	<< ":" << SERVER_IP << " 366 " << user.get_nick()
-		<< " #" << " :End of NAMES list." << "\r\n";
+		<< " #" << ch_name << " :End of NAMES list." << "\r\n";
+	irc_log(DEBUG, ss.str());
 	return (ss.str());
 }
 

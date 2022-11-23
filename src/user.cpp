@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:14:58 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/23 11:20:30 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/23 14:10:53 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,11 @@ std::string	User::get_ip(void) const
 	return (_ip);
 }
 
+int			User::get_fd(void) const
+{
+	return (_fd);
+}
+
 bool	User::get_auth(void) const
 {
 	return (_auth);
@@ -99,6 +104,11 @@ void				User::set_user(const std::string user)
 void				User::set_ip(const std::string ip)
 {
 	_ip = ip;
+}
+
+void				User::set_fd(const int fd)
+{
+	_fd = fd;
 }
 
 void				User::set_auth(const bool auth)
