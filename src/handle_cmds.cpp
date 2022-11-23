@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_cmds.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/23 15:40:04 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/23 16:34:56 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,10 +112,17 @@ static void	handle_cmd(std::vector<client> &clients, channel_type &channels, std
 		
 		if (it != channels.end()) // channel found
 		{
-			std::vector<User>	users = (*it).second;
-			irc_log(DEBUG, (*it).first);
-			std::vector<User>::iterator	ite = users.begin();
-			for (; ite != users.end(); ite++)
+			// std::vector<User>	users = (*it).second;
+			irc_log(DEBUG, "channel name is " + (*it).first);
+			std::vector<User>::iterator	ite;
+			for (ite = (*it).second.begin(); ite != (*it).second.end(); ite++)
+			{
+				// if (clients[i].second.get_nick() == (*ite).get_nick())
+				// 	continue ;
+				reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
+				send((*ite).get_fd(), reply.c_str(), reply.length(), 0);
+			}
+			for (ite = (*it).second.begin(); ite != (*it).second.end(); ite++)
 			{
 				if (clients[i].second.get_nick() == (*ite).get_nick())
 				{
@@ -123,13 +130,6 @@ static void	handle_cmd(std::vector<client> &clients, channel_type &channels, std
 					(*it).second.erase(ite);
 					break ;
 				}
-			}
-			for (ite = users.begin(); ite != users.end(); ite++)
-			{
-				// if (clients[i].second.get_nick() == (*ite).get_nick())
-				// 	continue ;
-				reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
-				send((*ite).get_fd(), reply.c_str(), reply.length(), 0);
 			}
 		}
 		else
