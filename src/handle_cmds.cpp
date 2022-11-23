@@ -6,7 +6,7 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/23 17:51:57 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/23 18:11:31 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ static void	handle_cmd(std::vector<client> &clients, channel_type &channels, std
 	}
 	else if (msg.find("JOIN #") == 0)
 	{
-		std::string ch_name = msg.substr(6);
+		std::string ch_name = msg.substr(6, (msg.find(" ", 6) - 6));
 		channel_type::iterator it = channels.find(ch_name);
 		for (std::vector<User>::iterator it_users = it->second.begin(); it_users != it->second.end(); it_users++)
 		{
