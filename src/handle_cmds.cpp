@@ -6,7 +6,7 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/23 16:34:56 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/23 17:51:57 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,16 @@ static void	auth_user(std::vector<client> &clients, std::string input, std::stri
 	}
 }
 
+static bool	user_present(std::vector<User> users, std::string nick)
+{
+	for (std::vector<User>::iterator it_users = users.begin(); it_users != users.end(); it_users++)
+	{
+		if (it_users->get_nick() == nick)
+			return (true);
+	}
+	return (false);
+}
+
 static void	handle_cmd(std::vector<client> &clients, channel_type &channels, std::string &msg, int i)
 {
 	std::string	reply;
@@ -39,7 +49,7 @@ static void	handle_cmd(std::vector<client> &clients, channel_type &channels, std
 		std::string				ch_name = msg.substr(9, (msg.find(" ", 9) - 9));
 		channel_type::iterator	it = channels.find(ch_name);
 		
-		if (it != channels.end()) // channel found
+		if (it != channels.end() && user_present((*it).second, clients[i].second.get_nick())) // channel found
 		{
 			std::vector<User>	users = (*it).second;
 			std::vector<User>::iterator	ite = users.begin();
@@ -77,7 +87,14 @@ static void	handle_cmd(std::vector<client> &clients, channel_type &channels, std
 	{
 		std::string ch_name = msg.substr(6);
 		channel_type::iterator it = channels.find(ch_name);
-		
+		for (std::vector<User>::iterator it_users = it->second.begin(); it_users != it->second.end(); it_users++)
+		{
+			if (it_users->get_nick() == clients[i].second.get_nick())
+			{
+				irc_log(DEBUG, "user is duplicate");
+				return ;
+			}
+		}
 		if (it == channels.end()) // create channel
 		{
 			std::vector<User> ch_users;
@@ -87,6 +104,7 @@ static void	handle_cmd(std::vector<client> &clients, channel_type &channels, std
 			channels.insert(new_ch);
 			reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
 			send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
+			irc_log(DEBUG, "channel created");
 		}
 		else // add user to channel
 		{
@@ -126,10 +144,14 @@ static void	handle_cmd(std::vector<client> &clients, channel_type &channels, std
 			{
 				if (clients[i].second.get_nick() == (*ite).get_nick())
 				{
-					std::cout << "address of ite: " << ite.base() << std::endl;
 					(*it).second.erase(ite);
 					break ;
 				}
+			}
+			if ((*it).second.size() == 0)
+			{
+				irc_log(DEBUG, "channel deleted");
+				channels.erase(ch_name);
 			}
 		}
 		else
