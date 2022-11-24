@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 16:07:59 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/24 16:46:07 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,19 @@ bool	check_pwd(std::string input, std::string pwd)
 		return (false);
 }
 
+bool	check_nick(std::string input)
+{
+	for (int i = 0; input[i] != '\0'; i++)
+	{
+		if (isalnum(input[i]) == 0)
+		{
+			irc_log(ERROR, "Nick contains invalid chars!");
+			return (false);
+		}
+	}
+	return (true);
+}
+
 bool	user_present(std::vector<User> users, std::string nick)
 {
 	for (std::vector<User>::iterator it_users = users.begin(); it_users != users.end(); it_users++)
@@ -143,6 +156,15 @@ std::string	build_no_such_nick(std::string nick)
 
 	ss	<< ":" << SERVER_IP << " 401 " << nick
 		<< " :No such nick/channel." << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_erroneus_nick(std::string nick)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 432 " << nick
+		<< " :invalid characters in given nick." << "\r\n";
 	return (ss.str());
 }
 

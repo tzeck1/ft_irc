@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 15:13:40 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/24 16:08:22 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/24 16:45:58 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void		kick_from_channels(client_type &clients, channel_type &channels, const std
 std::string	ip_itostr(in_addr_t ip_raw);
 bool		nick_in_use(std::string nick, client_type &clients);
 bool		check_pwd(std::string input, std::string pwd);
+bool		check_nick(std::string input);
 std::string	get_nick_from_msg(std::string msg);
 bool		user_present(std::vector<User> users, std::string nick);
 
@@ -37,6 +38,7 @@ bool		user_present(std::vector<User> users, std::string nick);
 std::string	build_prefix(User &user);
 std::string	build_prefix_from_nick(client_type &clients, const std::string &nick);
 std::string	build_no_such_nick(std::string nick);
+std::string	build_erroneus_nick(std::string nick);
 std::string	build_nick_in_use(User user);
 std::string	build_welcome(User user);
 std::string	build_bad_pwd(std::string pwd);

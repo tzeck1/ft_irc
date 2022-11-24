@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:14:58 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/24 10:02:57 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/24 16:49:08 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,17 @@ void	init_user(User &user, std::vector<client> &clients, std::string client_msg,
 	irc_log(TRACE, "called init_user");
 	if (client_msg.find("NICK ") == 0)
 	{
-		if (nick_in_use(client_msg.substr(5, (client_msg.length() - 5)), clients) == true)
+		std::string nick = client_msg.substr(5, (client_msg.length() - 5));
+		if (nick_in_use(nick, clients) == true)
 		{
 			irc_log(WARNING, "nickname already in use");
 			std::string	error = build_nick_in_use(user);
+			send(fd, error.c_str(), error.length(), 0);
+		}
+		else if (check_nick(nick) == false)
+		{
+			irc_log(WARNING, "forbidden character in nickname");
+			std::string	error = build_erroneus_nick(nick);
 			send(fd, error.c_str(), error.length(), 0);
 		}
 		else
