@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 12:23:53 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/24 16:07:59 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,34 @@ std::string	build_bad_pwd(std::string pwd)
 
 	ss	<< ":" << SERVER_IP << " 464 " << pwd
 		<< " :Incorrect server password." << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_youre_oper(std::string nick)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 381 " << nick
+		<< " :You are now an IRC operator." << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_no_privileges(std::string nick)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 481 " << nick
+		<< " :Permission Denied - You're not an IRC operator." << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_kill_done(std::string nick, std::string reason)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 361 " << nick
+		<< " :was kicked. (reason: " << reason
+		<< ")" << "\r\n";
 	return (ss.str());
 }
 

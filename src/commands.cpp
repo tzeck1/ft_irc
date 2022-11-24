@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 14:20:33 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/24 16:23:13 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,13 +216,18 @@ void		handle_leave_channels(client_type &clients, size i, channel_type &channels
 	}
 }
 
-void		handle_set_op(client_type &clients, std::string &msg)
+void		handle_set_op(client_type &clients, int i, std::string &msg)
 {
-	std::string nick = msg.substr(5, (msg.find(" ", 5) - 5));
-	std::string op_pwd = msg.substr((msg.find(" ", 5) + 1));
+	std::string	nick = msg.substr(5, (msg.find(" ", 5) - 5));
+	std::string	op_pwd = msg.substr((msg.find(" ", 5) + 1));
+	std::string	reply;
 
 	if (op_pwd != OP_PWD)
+	{
 		irc_log(ERROR, "wrong oper password!");
+		reply = build_bad_pwd(op_pwd);
+		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
+	}
 	else
 	{
 		client_type::iterator it = clients.begin();
@@ -232,22 +237,38 @@ void		handle_set_op(client_type &clients, std::string &msg)
 				break ;
 		}
 		if (it == clients.end())
+		{
 			irc_log(ERROR, "nick for oper cmd not found!");
-		else
+			reply = build_no_such_nick(nick);
+			send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
+		}
+		else if ((*it).second.get_op() == false)
+		{
 			(*it).second.set_op(true);
+			reply = build_youre_oper(nick);
+			send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
+		}
 	}
 }
 
 bool		handle_kick_user(client_type &clients, size i, channel_type &channels, std::string &msg)
 {
-	std::string nick = msg.substr(5, (msg.find(" ", 5) - 5));
+	std::string	nick = msg.substr(5, (msg.find(" ", 5) - 5));
+	std::string	reason;
+	size		n = msg.find(":");
+	if (n != std::string::npos)
+		reason = msg.substr(n + 1);
+	std::string	reply;
 	irc_log(INFO, nick);
 	// std::string reason = msg.substr((msg.find(" ", 6)));
-	std::string reason = msg.substr((msg.find(" ", 5) + 1));
 	irc_log(INFO, reason);
 
 	if (clients[i].second.get_op() == false)
+	{
+		reply = build_no_privileges(clients[i].second.get_nick());
+		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
 		irc_log(ERROR, "not a op (kill cmd)");
+	}
 	else
 	{
 		client_type::iterator it = clients.begin();
@@ -255,11 +276,18 @@ bool		handle_kick_user(client_type &clients, size i, channel_type &channels, std
 		{
 			if ((*it).second.get_nick() == nick)
 			{
+				if (clients[i].second.get_nick() != nick)
+				{
+					reply = build_kill_done(nick, reason);
+					send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
+				}
 				kick_from_channels(clients, channels, nick);
 				close_connection(clients, it);
 				return (true);
 			}
 		}
+		reply = build_no_such_nick(nick);
+		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
 	}
 	return (false);
 }

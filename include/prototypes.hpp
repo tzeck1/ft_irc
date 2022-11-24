@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prototypes.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 15:13:40 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/24 13:45:28 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/24 16:08:22 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ std::string	build_no_such_nick(std::string nick);
 std::string	build_nick_in_use(User user);
 std::string	build_welcome(User user);
 std::string	build_bad_pwd(std::string pwd);
+std::string	build_youre_oper(std::string nick);
+std::string	build_no_privileges(std::string nick);
+std::string	build_kill_done(std::string nick, std::string reason);
 std::string	build_users_in_channel(channel_type &channels, std::string ch_name, User &user);
 
 /*------	HANDLE COMMANDS	-----*/
@@ -49,5 +52,5 @@ void		handle_channel_msg(client_type &clients, size i, channel_type &channels, s
 void		handle_priv_msg(client_type &clients, size i, std::string &msg);
 void		handle_join_channels(client_type &clients, size i, channel_type &channels, std::string &msg);
 void		handle_leave_channels(client_type &clients, size i, channel_type &channels, std::string &msg);
-void		handle_set_op(client_type &clients, std::string &msg);
+void		handle_set_op(client_type &clients, int i, std::string &msg);
 bool		handle_kick_user(client_type &clients, size i, channel_type &channels, std::string &msg);
