@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 14:20:33 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/24 14:47:01 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,8 @@ static void		handle_join_channel(client_type &clients, size i, channel_type &cha
 	std::string		ch_name;
 
 	msg.erase(0, 1);
-	if (msg.find(",", 0) != std::string::npos){
+	if (msg.find(",", 0) != std::string::npos)
+	{
 		ch_name = msg.substr(0, msg.find(",", 0));
 		msg.erase(0, msg.find(",", 0) + 1);
 		irc_log(DEBUG, "message left after erasing first channel name" + msg);
@@ -143,7 +144,8 @@ static void		handle_leave_channel(client_type &clients, size i, channel_type &ch
 
 	irc_log(DEBUG, "msg in handle_leave: " + msg);
 	msg.erase(0, 1);
-	if (msg.find(",", 0) != std::string::npos){
+	if (msg.find(",", 0) != std::string::npos)
+	{
 		ch_name = msg.substr(0, msg.find(",", 0));
 		msg.erase(0, msg.find(",", 0) + 1);
 		irc_log(DEBUG, "message left after erasing first channel name" + msg);
