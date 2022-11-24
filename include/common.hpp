@@ -56,12 +56,4 @@
  * @param DEBUG Detailed info about the state of the program.
  * @param TRACE Low-level info like function entry/exit points.
 */
-typedef enum e_err
-{
-	CRITICAL = 0,
-	ERROR = 1,
-	WARNING = 2,
-	INFO = 3,
-	DEBUG = 4,
-	TRACE = 5
-}	t_err;
+typedef enum e_err	{ CRITICAL = 0, ERROR = 1, WARNING = 2, INFO = 3, DEBUG = 4, TRACE = 5 }	t_err;

@@ -3,84 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/23 19:03:49 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/24 10:16:01 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "user.hpp"
 #include "common.hpp"
+#include "prototypes.hpp"
 #include <sstream>
 #include <unistd.h>
-
-/**
- * 0 - quiet: 			No messages printed.
- * 1 - standard:		Print only CRITICAL, ERROR, WARNING, INFO.
- * 2 - verbose:			Also print DEBUG.
- * 3 - very verbose:	Also print TRACE.
-*/
-#define VERBOSITY 3
-
-/**
- * Type can be one of the following:
- * CRITICAL Critical errors, exits afterwards.
- * ERROR Non-critical, may run fine, some parts may break.
- * WARNING Not technically an error but could cause one.
- * INFO General info about the program.
- * DEBUG Detailed info about the state of the program.
- * TRACE Low-level info like function entry/exit points.
-*/
-t_err	irc_log(enum e_err type, std::string msg)
-{
-	switch (type)
-	{
-		case CRITICAL:
-			if (VERBOSITY)
-				std::cerr	<< RED_BOLD << "FATAL ERROR: " << RESET
-							<< RED << msg << RESET << std::endl;
-			exit(1);
-		case ERROR:
-			if (VERBOSITY)
-				std::cerr	<< YELLOW_BOLD << "ERROR: " << RESET
-							<< YELLOW << msg << RESET << std::endl;
-			break;
-		case WARNING:
-			if (VERBOSITY)
-				std::cerr	<< YELLOW_BOLD << "WARNING: " << RESET
-							<< YELLOW << msg << RESET << std::endl;
-			break;
-		case INFO:
-			if (VERBOSITY)
-				std::cout	<< GREEN_BOLD << "INFO: " << RESET
-							<< GREEN << msg << RESET << std::endl;
-			break;
-		case DEBUG:
-			if (VERBOSITY >= 2)
-				std::cerr	<< PURPLE_BOLD << "DEBUG: " << RESET
-							<< PURPLE << msg << RESET << std::endl;
-			break;
-		case TRACE:
-			if (VERBOSITY == 3)
-				std::cerr	<< BLUE_BOLD << "TRACE: " << RESET
-							<< BLUE << msg << RESET << std::endl;
-			break;
-	}
-	return (type);
-}
-
-void	server_error(std::string err)
-{
-	std::cout << RED_BOLD << "FATAL ERROR: " << RESET << RED << err << std::endl;
-	exit(EXIT_FAILURE);
-}
-
-void	loop_error(std::string err, bool &end_server, bool kill)
-{
-	std::cout << RED_BOLD << "RUNTIME ERROR: " << RESET << RED << err << std::endl;
-	end_server = kill;
-}
 
 std::string	ip_itostr(in_addr_t ip_raw)
 {
@@ -93,20 +27,27 @@ std::string	ip_itostr(in_addr_t ip_raw)
 	return (ss.str());
 }
 
-/**
- * close() fd of user and erase it from the vector.
-*/
+bool	nick_in_use(std::string nick, std::vector<client> &clients)
+{
+	for (std::vector<client>::iterator it = clients.begin(); it != clients.end(); it++)
+	{
+		if (nick == it->second.get_nick())
+			return (true);
+	}
+	return (false);
+}
+
 void	close_connection(std::vector<client> &clients, size i)
 {
 	if (close(clients[i].first.fd) == -1)
-		irc_log(CRITICAL, "Failed to close file descriptor");
+		irc_log(CRITICAL, "failed to close file descriptor");
 	clients.erase(clients.begin() + i);
 }
 
 void	close_connection(std::vector<client> &clients, client_type::iterator it)
 {
 	if (close((*it).second.get_fd()) == -1)
-		irc_log(CRITICAL, "Failed to close file descriptor");
+		irc_log(CRITICAL, "failed to close file descriptor");
 	clients.erase(it);
 }
 
@@ -142,6 +83,16 @@ bool	check_pwd(std::string input, std::string pwd)
 		return (true);
 	else
 		return (false);
+}
+
+bool	user_present(std::vector<User> users, std::string nick)
+{
+	for (std::vector<User>::iterator it_users = users.begin(); it_users != users.end(); it_users++)
+	{
+		if (it_users->get_nick() == nick)
+			return (true);
+	}
+	return (false);
 }
 
 /*--------------	BUILD REPLIES	-------------*/

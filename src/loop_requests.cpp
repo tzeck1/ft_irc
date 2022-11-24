@@ -3,19 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   loop_requests.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/23 14:04:49 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/24 10:03:20 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "prototypes.hpp"
 #include "user.hpp"
 
-/**
- * @return a vector of the fds connected to be used for poll().
-*/
 std::vector<pollfd>	get_client_fds(std::vector<client> &clients)
 {
 	std::vector<pollfd> client_fds;

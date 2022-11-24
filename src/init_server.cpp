@@ -6,7 +6,7 @@
 /*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:39:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/23 09:27:31 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/24 09:50:40 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,18 @@ int	init_server(int port)
 	/*-----	create socket	-----*/
 	int	socket_d = socket(AF_INET, SOCK_STREAM, 0); //socket discriptor
 	if (socket_d < 0)
-		server_error("socket() failed!");
+		irc_log(CRITICAL, "socket() failed!");
 
 	/*-----	make socket reuseable	-----*/
 	int on = 1; //string containing the option value (useless but will break with NULL)
 	int	err = setsockopt(socket_d, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)); // enable socket options
 	if (err == -1)
-		server_error("setsockopt() failed!");
+		irc_log(CRITICAL, "setsockopt() failed!");
 	
 	/*-----	set socket to non-blocking	-----*/
 	err = fcntl(socket_d, F_SETFL, O_NONBLOCK); // set nonblocking flag to socket_d
 	if (err < 0)
-		server_error("fcntl() failed!");
+		irc_log(CRITICAL, "fcntl() failed!");
 
 	/*-----	assigne address to socket	-----*/
 	struct sockaddr_in addr;
@@ -39,12 +39,12 @@ int	init_server(int port)
 	addr.sin_port = htons(port); // set socket to port (420)
 	err = bind(socket_d, (struct sockaddr *)&addr, sizeof(addr));
 	if (err == -1)
-		server_error("bind() failed!");
+		irc_log(CRITICAL, "bind() failed!");
 
 	/*-----	listen for connections on a socket	-----*/
 	err = listen(socket_d, BACKLOG); // marks socket as passive to recieve incomming messages
 	if (err == -1)
-		server_error("listen() failed!");
+		irc_log(CRITICAL, "listen() failed!");
 
 	return (socket_d);
 }
