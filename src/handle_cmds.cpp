@@ -6,7 +6,7 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/24 13:36:56 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/24 13:45:24 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static bool	handle_cmd(client_type &clients, channel_type &channels, std::string
 	else if (msg.find("JOIN #") == 0)
 		handle_join_channels(clients, i, channels, msg);
 	else if (msg.find("PART ") == 0)
-		handle_leave_channel(clients, i, channels, msg);
+		handle_leave_channels(clients, i, channels, msg);
 	else if (msg.find("OPER ") == 0)
 		handle_set_op(clients, msg);
 	else if (msg.find("KILL ") == 0)

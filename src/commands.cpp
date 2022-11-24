@@ -6,7 +6,7 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 13:44:44 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/24 14:08:39 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,12 +132,28 @@ void		handle_join_channels(client_type &clients, size i, channel_type &channels,
 	}
 }
 
-void		handle_leave_channel(client_type &clients, size i, channel_type &channels, std::string &msg)
+static void		handle_leave_channel(client_type &clients, size i, channel_type &channels, std::string &msg, std::string comment)
 {
 	std::string				reply;
-	std::string				ch_name = msg.substr(6, (msg.find(" ", 6) - 6));
+	std::string				ch_name;
+
+	irc_log(DEBUG, "msg in handle_leave: " + msg);
+	msg.erase(0, 1);
+	if (msg.find(",", 0) != std::string::npos){
+		ch_name = msg.substr(0, msg.find(",", 0));
+		msg.erase(0, msg.find(",", 0) + 1);
+		irc_log(DEBUG, "message left after erasing first channel name" + msg);
+	}
+	else
+	{
+		ch_name = msg.substr(0, msg.find(" ", 0));
+		irc_log(INFO, "channel name in else is " + ch_name);
+		msg.erase(0, msg.size());
+	}
+	irc_log(DEBUG, "message left after erasing first channel name" + ch_name);
+	if (ch_name.size() == 0)
+		return ;
 	channel_type::iterator	it = channels.find(ch_name);
-	
 	if (it != channels.end()) // channel found
 	{
 		// std::vector<User>	users = (*it).second;
@@ -147,7 +163,7 @@ void		handle_leave_channel(client_type &clients, size i, channel_type &channels,
 		{
 			// if (clients[i].second.get_nick() == (*ite).get_nick())
 			// 	continue ;
-			reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
+			reply = build_prefix(clients[i].second) + " PART #" + ch_name + " " + comment + "\r\n";
 			send((*ite).get_fd(), reply.c_str(), reply.length(), 0);
 		}
 		for (ite = (*it).second.begin(); ite != (*it).second.end(); ite++)
@@ -169,6 +185,30 @@ void		handle_leave_channel(client_type &clients, size i, channel_type &channels,
 		irc_log(WARNING, "sending channel message failed");
 		reply = build_no_such_nick(ch_name); //needs # before channel name
 		send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
+	}
+}
+
+void		handle_leave_channels(client_type &clients, size i, channel_type &channels, std::string &msg)
+{
+	std::string		comment;
+
+	if (msg.find(":", 0) != std::string::npos)//there is a msg afterwards
+	{
+		comment = msg.substr(msg.find(":", 0) + 1, msg.size() - (msg.find(":", 0) + 1));//from next spacebar after channel name until end
+		msg.erase(msg.find(":", 0) - 1, msg.size() - (msg.find(":", 0) - 1));//delete the parting msg part
+		irc_log(TRACE, "msg after erasing comment: " + msg);
+	}
+	if (comment.size())
+		irc_log(INFO, "parting msg is " + comment);
+
+	msg.erase(0, 5);
+	irc_log(DEBUG, "msg after cutting LEAVE is: " + msg);
+	if (msg.find(",", 0) == std::string::npos)
+		handle_leave_channel(clients, i, channels, msg, comment);
+	else
+	{
+		while (msg.size())
+			handle_leave_channel(clients, i, channels, msg, comment);
 	}
 }
 
