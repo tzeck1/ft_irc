@@ -6,7 +6,7 @@
 /*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 14:08:39 by mmeising         ###   ########.fr       */
+/*   Updated: 2022/11/24 14:20:33 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,11 @@ static void		handle_join_channel(client_type &clients, size i, channel_type &cha
 		irc_log(DEBUG, "message left after erasing first channel name" + msg);
 	}
 	else
+	{
 		ch_name = msg.substr(0, msg.find(" ", 0));
+		msg.erase(0, msg.find(",", 0));
+		irc_log(WARNING, "join last msg after erase: " + msg);
+	}
 	irc_log(DEBUG, "message left after erasing first channel name" + msg);
 	if (ch_name.size() == 0)
 		return ;
@@ -147,8 +151,8 @@ static void		handle_leave_channel(client_type &clients, size i, channel_type &ch
 	else
 	{
 		ch_name = msg.substr(0, msg.find(" ", 0));
-		irc_log(INFO, "channel name in else is " + ch_name);
-		msg.erase(0, msg.size());
+		msg.erase(0, msg.find(",", 0));
+		irc_log(WARNING, "leave last msg after erase: " + msg);
 	}
 	irc_log(DEBUG, "message left after erasing first channel name" + ch_name);
 	if (ch_name.size() == 0)
