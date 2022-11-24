@@ -6,13 +6,13 @@
 /*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 10:29:09 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/23 10:49:13 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/24 09:36:37 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "prototypes.hpp"
 
-std::string	get_pwd(char *input)
+static std::string	get_pwd(char *input)
 {
 	for (int i = 0; input[i] != '\0'; i++)
 	{
@@ -30,8 +30,10 @@ int	main(int argc, char **argv)
 	if (port == 0)
 		irc_log(CRITICAL, "Invalid port given!");
 	std::string pwd = get_pwd(argv[2]);
+	//	SETUP SOCKET SERVER
 	int socket_d = init_server(port);
-	irc_log(INFO, "Server setup complete");
+	irc_log(INFO, "server setup complete");
+	//	WAIT FOR INPUT / HANDLE CMDS
 	loop_requests(socket_d, pwd);
 	return (EXIT_SUCCESS);
 }
