@@ -3,19 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   loop_requests.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/23 12:15:39 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/24 12:17:10 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "prototypes.hpp"
 #include "user.hpp"
 
-/**
- * @return a vector of the fds connected to be used for poll().
-*/
 std::vector<pollfd>	get_client_fds(std::vector<client> &clients)
 {
 	std::vector<pollfd> client_fds;
@@ -59,12 +56,13 @@ static void	accept_users(std::vector<client> &clients, int socket_d)
 		new_pollfd.events = POLLIN;
 		User	new_user;
 		new_user.set_ip(ip_itostr(client_addr.sin_addr.s_addr));
+		new_user.set_fd(new_fd);
 		clients.push_back(client(new_pollfd, new_user));
 		irc_log(TRACE, "Accepted a new user");
 	}
 }
 
-static std::string	receive_msg(int client_fd, std::vector<client> &clients, size i)
+static std::string	receive_msg(int client_fd, std::vector<client> &clients, size i, channel_type &channels)
 {
 	char	buffer[512];
 	int		err;
@@ -75,15 +73,21 @@ static std::string	receive_msg(int client_fd, std::vector<client> &clients, size
 	if (err < 0 && errno != EWOULDBLOCK)
 		irc_log(WARNING, "recv() failed");
 	if (err == 0) //TODO: should erase vector and 'close' fd
+	{
+		irc_log(INFO, "before");
+		kick_from_channels(clients, channels, clients[i].second.get_nick());
+		irc_log(INFO, "after");
 		close_connection(clients, i);
+	}
 	return (buffer);
 }
 
 void	loop_requests(int socket_d, std::string pwd)
 {
-	std::vector<client>	clients;
-	User				server("server");
-	pollfd				socket;
+	std::vector<client>							clients;
+	std::map< std::string, std::vector<User> >	channels;
+	User										server("server");
+	pollfd										socket;
 
 	socket.fd = socket_d; // open file
 	socket.events = POLLIN; // requestet events (POLLIN = there is data to be read)
@@ -104,9 +108,9 @@ void	loop_requests(int socket_d, std::string pwd)
 			}
 			if (i != 0) //if not socket_d
 			{
-				clients[i].second.msg += receive_msg(clients[i].first.fd, clients, i);//close only in here when receiving len of 0
+				clients[i].second.msg += receive_msg(clients[i].first.fd, clients, i, channels);//close only in here when receiving len of 0
 				if (i < clients.size() && clients[i].second.msg.find("\r\n") != std::string::npos)
-					parse_cmds(clients, clients[i].second.msg, i, pwd);//no close in here cause QUIT is just a message at first
+					parse_cmds(clients, channels, clients[i].second.msg, i, pwd);//no close in here cause QUIT is just a message at first
 			}
 		}
 	}

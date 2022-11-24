@@ -6,14 +6,14 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/23 12:19:59 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/24 15:26:01 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "prototypes.hpp"
 #include "user.hpp"
 
-static void	auth_user(std::vector<client> &clients, std::string input, std::string pwd, size i)
+static void	auth_user(client_type &clients, std::string input, std::string pwd, size i)
 {
 	if (check_pwd(input, pwd) == true)
 		clients[i].second.set_auth(true);
@@ -24,37 +24,31 @@ static void	auth_user(std::vector<client> &clients, std::string input, std::stri
 	}
 }
 
-static void	handle_cmd(std::vector<client> &clients, std::string &msg, int i)
+static bool	handle_cmd(client_type &clients, channel_type &channels, std::string &msg, int i)
 {
 	std::string	reply;
 
 	irc_log(TRACE, "handle_cmd called");
 	if (msg.find("PING ") == 0)
-	{
-		reply = "PONG " + (std::string)SERVER_IP + "\r\n";
-		send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
-	}
+		handle_ping(clients, i);
+	else if (msg.find("PRIVMSG #") == 0)
+		handle_channel_msg(clients, i, channels, msg);
 	else if (msg.find("PRIVMSG ") == 0)
-	{
-		for (std::vector<client>::iterator it = clients.begin(); it != clients.end(); it++)
-		{
-			if ((*it).second.get_nick() == get_nick_from_msg(msg))
-			{
-				reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
-				send((*it).first.fd, reply.c_str(), reply.length(), 0);
-				return ;
-			}
-		}
-		irc_log(WARNING, "sending private message failed");
-		reply = build_no_such_nick(get_nick_from_msg(msg));
-		send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
-	}
+		handle_priv_msg(clients, i, msg);
+	else if (msg.find("JOIN #") == 0)
+		handle_join_channels(clients, i, channels, msg);
+	else if (msg.find("PART ") == 0)
+		handle_leave_channels(clients, i, channels, msg);
+	else if (msg.find("OPER ") == 0)
+		handle_set_op(clients, i, msg);
+	else if (msg.find("KILL ") == 0)
+		return (handle_kick_user(clients, i, channels, msg));
 	// else if (msg.find("QUIT ") == 0)
 		//need to send msg to all members of same channel
-	// if (msg.find("NICK "))
+	return (false);
 }
 
-void	parse_cmds(std::vector<client> &clients, std::string &msg, int i, std::string pwd)
+void	parse_cmds(client_type &clients, channel_type &channels, std::string &msg, int i, std::string pwd)
 {
 	std::string	tmp;
 
@@ -74,6 +68,9 @@ void	parse_cmds(std::vector<client> &clients, std::string &msg, int i, std::stri
 				init_user(clients[i].second, clients, tmp, clients[i].first.fd);
 		}
 		else
-			handle_cmd(clients, tmp, i);
+		{
+			if (handle_cmd(clients, channels, tmp, i))
+				break ;
+		}
 	}
 }

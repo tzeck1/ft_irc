@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+         #
+#    By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/23 11:28:39 by btenzlin         ###   ########.fr        #
+#    Updated: 2022/11/24 12:29:22 by mmeising         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ NAME = ./ircserv
 OBJ_PATH = ./.obj/
 # SOURCES
 SRC =	main.cpp init_server.cpp utils.cpp loop_requests.cpp handle_cmds.cpp \
-		user.cpp
+		user.cpp debug.cpp commands.cpp
 
 # OBJECTS
 OBJ :=$(addprefix $(OBJ_PATH), $(SRC:.cpp=.o))
@@ -40,22 +40,19 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	@echo $(Y)Compiling [$(OBJ)]
-	@sleep 0.1
-	@printf $(UP)$(CUT)
 	@echo into [$(NAME)]...$(X)
-	@sleep 0.1
-	@printf $(UP)$(CUT)
 	@$(CXX) $(CXXFLAGS) $^ $(INC) -o $(NAME)
+	@printf $(UP)$(CUT)
+	@printf $(UP)$(CUT)
+	@printf $(UP)$(CUT)
 	@echo $(G)Finished [$(NAME)]$(X)
 
 $(OBJ_PATH)%.o: %.cpp
 	@echo $(Y)Compiling [$@]...$(X)
 	@mkdir -p .obj
-	@sleep 0.1
-	@printf $(UP)$(CUT)
 	@$(CXX) $(CXXFLAGS) -MMD -MP -c $< $(INC) -o $@
 	@echo $(G)Finished [$@]$(X)
-	@sleep 0.1
+	@printf $(UP)$(CUT)
 	@printf $(UP)$(CUT)
 
 clean:

@@ -6,81 +6,15 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/23 11:16:51 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/24 16:07:59 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "user.hpp"
 #include "common.hpp"
+#include "prototypes.hpp"
 #include <sstream>
 #include <unistd.h>
-
-/**
- * 0 - quiet: 			No messages printed.
- * 1 - standard:		Print only CRITICAL, ERROR, WARNING, INFO.
- * 2 - verbose:			Also print DEBUG.
- * 3 - very verbose:	Also print TRACE.
-*/
-#define VERBOSITY 3
-
-/**
- * Type can be one of the following:
- * CRITICAL Critical errors, exits afterwards.
- * ERROR Non-critical, may run fine, some parts may break.
- * WARNING Not technically an error but could cause one.
- * INFO General info about the program.
- * DEBUG Detailed info about the state of the program.
- * TRACE Low-level info like function entry/exit points.
-*/
-t_err	irc_log(enum e_err type, std::string msg)
-{
-	switch (type)
-	{
-		case CRITICAL:
-			if (VERBOSITY)
-				std::cerr	<< RED_BOLD << "FATAL ERROR: " << RESET
-							<< RED << msg << RESET << std::endl;
-			exit(1);
-		case ERROR:
-			if (VERBOSITY)
-				std::cerr	<< YELLOW_BOLD << "ERROR: " << RESET
-							<< YELLOW << msg << RESET << std::endl;
-			break;
-		case WARNING:
-			if (VERBOSITY)
-				std::cerr	<< YELLOW_BOLD << "WARNING: " << RESET
-							<< YELLOW << msg << RESET << std::endl;
-			break;
-		case INFO:
-			if (VERBOSITY)
-				std::cout	<< GREEN_BOLD << "INFO: " << RESET
-							<< GREEN << msg << RESET << std::endl;
-			break;
-		case DEBUG:
-			if (VERBOSITY >= 2)
-				std::cerr	<< PURPLE_BOLD << "DEBUG: " << RESET
-							<< PURPLE << msg << RESET << std::endl;
-			break;
-		case TRACE:
-			if (VERBOSITY == 3)
-				std::cerr	<< BLUE_BOLD << "TRACE: " << RESET
-							<< BLUE << msg << RESET << std::endl;
-			break;
-	}
-	return (type);
-}
-
-void	server_error(std::string err)
-{
-	std::cout << RED_BOLD << "FATAL ERROR: " << RESET << RED << err << std::endl;
-	exit(EXIT_FAILURE);
-}
-
-void	loop_error(std::string err, bool &end_server, bool kill)
-{
-	std::cout << RED_BOLD << "RUNTIME ERROR: " << RESET << RED << err << std::endl;
-	end_server = kill;
-}
 
 std::string	ip_itostr(in_addr_t ip_raw)
 {
@@ -93,14 +27,72 @@ std::string	ip_itostr(in_addr_t ip_raw)
 	return (ss.str());
 }
 
-/**
- * close() fd of user and erase it from the vector.
-*/
-void	close_connection(std::vector<client> &clients, size i)
+bool	nick_in_use(std::string nick, client_type &clients)
+{
+	for (client_type::iterator it = clients.begin(); it != clients.end(); it++)
+	{
+		if (nick == it->second.get_nick())
+			return (true);
+	}
+	return (false);
+}
+
+#include <stdlib.h>
+
+void	close_connection(client_type &clients, size i)
 {
 	if (close(clients[i].first.fd) == -1)
-		irc_log(CRITICAL, "Failed to close file descriptor");
+		irc_log(CRITICAL, "failed to close file descriptor");
 	clients.erase(clients.begin() + i);
+}
+
+void	close_connection(client_type &clients, client_type::iterator it)
+{
+	if (close((*it).second.get_fd()) == -1)
+		irc_log(CRITICAL, "failed to close file descriptor");
+	clients.erase(it);
+}
+
+void	kick_from_channels(client_type &clients, channel_type &channels, const std::string &nick)
+{
+	channel_type::iterator	it = channels.begin();
+
+	for (; it != channels.end(); it++)
+	{
+		if (user_present((*it).second, nick))
+		{
+			for (std::vector<User>::iterator it_users = (*it).second.begin(); it_users != (*it).second.end(); it_users++)
+			{
+				if (it_users->get_nick() == nick)
+				{
+					irc_log(INFO, "[inside-inside] before");
+					// std::string	reply = build_prefix(*it_users) + " PART #" + (*it).first + "\r\n";
+					// send((*it_users).get_fd(), reply.c_str(), reply.length(), 0);
+					(*it).second.erase(it_users);
+					irc_log(INFO, "[inside-inside] after");
+					break ;
+				}
+			}
+			irc_log(INFO, "[inside] before");
+			std::string	reply = build_prefix_from_nick(clients, nick) + " PART #" + (*it).first + "\r\n";
+			irc_log(INFO, "[inside] after");
+			for (std::vector<User>::iterator it_users = (*it).second.begin(); it_users != (*it).second.end(); it_users++)
+				send((*it_users).get_fd(), reply.c_str(), reply.length(), 0);
+		}
+	}
+}
+
+static std::string	get_names(channel_type channels, std::string ch_name)
+{
+	std::string	names;
+
+	channel_type::iterator	it = channels.find(ch_name);
+	std::vector<User>	users = (*it).second;
+	std::vector<User>::iterator	ite = users.begin();
+	for (; ite != users.end() - 1; ite++)
+		names += (*ite).get_nick() + " ";
+	names += (*ite).get_nick();
+	return (names);
 }
 
 std::string	get_nick_from_msg(std::string msg)
@@ -122,6 +114,16 @@ bool	check_pwd(std::string input, std::string pwd)
 		return (true);
 	else
 		return (false);
+}
+
+bool	user_present(std::vector<User> users, std::string nick)
+{
+	for (std::vector<User>::iterator it_users = users.begin(); it_users != users.end(); it_users++)
+	{
+		if (it_users->get_nick() == nick)
+			return (true);
+	}
+	return (false);
 }
 
 /*--------------	BUILD REPLIES	-------------*/
@@ -153,6 +155,47 @@ std::string	build_bad_pwd(std::string pwd)
 	return (ss.str());
 }
 
+std::string	build_youre_oper(std::string nick)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 381 " << nick
+		<< " :You are now an IRC operator." << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_no_privileges(std::string nick)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 481 " << nick
+		<< " :Permission Denied - You're not an IRC operator." << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_kill_done(std::string nick, std::string reason)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 361 " << nick
+		<< " :was kicked. (reason: " << reason
+		<< ")" << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_users_in_channel(channel_type &channels, std::string ch_name, User &user)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 353 " << user.get_nick()
+		<< " = #" << ch_name << " :" << get_names(channels, ch_name) << "\r\n";
+	
+	ss	<< ":" << SERVER_IP << " 366 " << user.get_nick()
+		<< " #" << ch_name << " :End of NAMES list." << "\r\n";
+	irc_log(DEBUG, ss.str());
+	return (ss.str());
+}
+
 std::string	build_welcome(User user)
 {
 	std::stringstream	ss;
@@ -169,4 +212,16 @@ std::string			build_prefix(User &user)
 
 	ss	<< ":" << user.get_nick() << "!" << user.get_user() << "@" << user.get_ip();
 	return (ss.str());
+}
+
+std::string			build_prefix_from_nick(client_type &clients, const std::string &nick)
+{
+	client_type::iterator it = clients.begin();
+
+	for (; it != clients.end(); it++)
+	{
+		if ((*it).second.get_nick() == nick)
+			break ;
+	}
+	return (build_prefix((*it).second));
 }

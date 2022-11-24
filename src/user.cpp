@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:14:58 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/23 11:20:30 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/24 10:02:57 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,8 @@
 #include "prototypes.hpp"
 #include <sstream>
 
-User::User(void) : _is_complete(false), _auth(false) {}
-User::User(std::string str) : _nick(str), _is_complete(false) {}
-// User::User(in_addr_t raw_ip) : _ip(ip_itostr(raw_ip)), _is_complete(false) {}
-
-static bool	nick_in_use(std::string nick, std::vector<client> &clients)
-{
-	for (std::vector<client>::iterator it = clients.begin(); it != clients.end(); it++)
-	{
-		if (nick == it->second.get_nick())
-			return (true);
-	}
-	return (false);
-}
+User::User(void) : _is_complete(false), _auth(false), _op(false)	{ }
+User::User(std::string str) : _nick(str), _is_complete(false)		{ }
 
 void	init_user(User &user, std::vector<client> &clients, std::string client_msg, int fd)
 {
@@ -54,64 +43,20 @@ void	init_user(User &user, std::vector<client> &clients, std::string client_msg,
 
 /* ----------------- GETTER ----------------- */
 
-std::string	User::get_nick(void) const
-{
-	return (_nick);
-}
-
-std::string	User::get_user(void) const
-{
-	return (_user);
-}
-
-std::string	User::get_ip(void) const
-{
-	return (_ip);
-}
-
-bool	User::get_auth(void) const
-{
-	return (_auth);
-}
-
-// std::string	User::get_msg(void) const
-// {
-// 	return (_msg);
-// }
-
-bool	User::get_is_complete(void) const
-{
-	return (_is_complete);
-}
+std::string	User::get_nick(void) const			{ return (_nick); }
+std::string	User::get_user(void) const			{ return (_user); }
+std::string	User::get_ip(void) const			{ return (_ip); }
+int			User::get_fd(void) const			{ return (_fd); }
+bool		User::get_auth(void) const			{ return (_auth); }
+bool		User::get_op(void) const			{ return (_op); }
+bool		User::get_is_complete(void) const	{ return (_is_complete); }
 
 /* ----------------- SETTER ----------------- */
 
-void				User::set_nick(const std::string nick)
-{
-	_nick = nick;
-}
-
-void				User::set_user(const std::string user)
-{
-	_user = user;
-}
-
-void				User::set_ip(const std::string ip)
-{
-	_ip = ip;
-}
-
-void				User::set_auth(const bool auth)
-{
-	_auth = auth;
-}
-
-// void				User::set_msg(const std::string msg)
-// {
-// 	_msg = _msg;
-// }
-
-void				User::set_is_complete(const bool is_complete)
-{
-	_is_complete = is_complete;
-}
+void		User::set_nick(const std::string nick)			{ _nick = nick; }
+void		User::set_user(const std::string user)			{ _user = user; }
+void		User::set_ip(const std::string ip)				{ _ip = ip; }
+void		User::set_fd(const int fd)						{ _fd = fd; }
+void		User::set_auth(const bool auth)					{ _auth = auth; }
+void		User::set_op(const bool op)						{ _op = op; }
+void		User::set_is_complete(const bool is_complete)	{ _is_complete = is_complete; }
