@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prototypes.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 15:13:40 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/24 11:56:21 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/24 13:37:23 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ std::string	build_users_in_channel(channel_type &channels, std::string ch_name, 
 void		handle_ping(client_type &clients, size i);
 void		handle_channel_msg(client_type &clients, size i, channel_type &channels, std::string &msg);
 void		handle_priv_msg(client_type &clients, size i, std::string &msg);
-void		handle_join_channel(client_type &clients, size i, channel_type &channels, std::string &msg);
+void		handle_join_channels(client_type &clients, size i, channel_type &channels, std::string &msg);
 void		handle_leave_channel(client_type &clients, size i, channel_type &channels, std::string &msg);
 void		handle_set_op(client_type &clients, std::string &msg);
 bool		handle_kick_user(client_type &clients, size i, channel_type &channels, std::string &msg);

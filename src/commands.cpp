@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 11:52:07 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/24 13:44:44 by mmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,22 @@ void		handle_priv_msg(client_type &clients, size i, std::string &msg)
 	send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 }
 
-void		handle_join_channel(client_type &clients, size i, channel_type &channels, std::string &msg)
+static void		handle_join_channel(client_type &clients, size i, channel_type &channels, std::string &msg)
 {
-	std::string	reply;
-	std::string ch_name = msg.substr(6, (msg.find(" ", 6) - 6));
+	std::string		reply;
+	std::string		ch_name;
+
+	msg.erase(0, 1);
+	if (msg.find(",", 0) != std::string::npos){
+		ch_name = msg.substr(0, msg.find(",", 0));
+		msg.erase(0, msg.find(",", 0) + 1);
+		irc_log(DEBUG, "message left after erasing first channel name" + msg);
+	}
+	else
+		ch_name = msg.substr(0, msg.find(" ", 0));
+	irc_log(DEBUG, "message left after erasing first channel name" + msg);
+	if (ch_name.size() == 0)
+		return ;
 	channel_type::iterator it = channels.find(ch_name);
 
 	for (std::vector<User>::iterator it_users = it->second.begin(); it_users != it->second.end(); it_users++)
@@ -85,7 +97,7 @@ void		handle_join_channel(client_type &clients, size i, channel_type &channels, 
 		ch_users.push_back(clients[i].second);
 		channel new_ch(ch_name, ch_users);
 		channels.insert(new_ch);
-		reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
+		reply = build_prefix(clients[i].second) + " JOIN #" + ch_name + "\r\n";
 		send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 		irc_log(DEBUG, "channel created");
 	}
@@ -98,13 +110,26 @@ void		handle_join_channel(client_type &clients, size i, channel_type &channels, 
 		std::vector<User>::iterator	ite = users.begin();
 		for (; ite != users.end(); ite++)
 		{
-			reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
+			reply = build_prefix(clients[i].second) + " JOIN #" + ch_name + "\r\n";
 			// irc_log(DEBUG, reply);
 			send((*ite).get_fd(), reply.c_str(), reply.length(), 0);
 		}
 	}
 	reply = build_users_in_channel(channels, ch_name, clients[i].second);
 	send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
+}
+
+void		handle_join_channels(client_type &clients, size i, channel_type &channels, std::string &msg)
+{
+	msg.erase(0, 5);
+	irc_log(DEBUG, "msg after cutting JOIN is: " + msg);
+	if (msg.find(",", 0) == std::string::npos)
+		handle_join_channel(clients, i, channels, msg);
+	else
+	{
+		while (msg.size())
+			handle_join_channel(clients, i, channels, msg);
+	}
 }
 
 void		handle_leave_channel(client_type &clients, size i, channel_type &channels, std::string &msg)
