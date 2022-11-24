@@ -6,7 +6,7 @@
 /*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 10:03:20 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/24 12:17:10 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static void	accept_users(std::vector<client> &clients, int socket_d)
 	}
 }
 
-static std::string	receive_msg(int client_fd, std::vector<client> &clients, size i)
+static std::string	receive_msg(int client_fd, std::vector<client> &clients, size i, channel_type &channels)
 {
 	char	buffer[512];
 	int		err;
@@ -73,7 +73,12 @@ static std::string	receive_msg(int client_fd, std::vector<client> &clients, size
 	if (err < 0 && errno != EWOULDBLOCK)
 		irc_log(WARNING, "recv() failed");
 	if (err == 0) //TODO: should erase vector and 'close' fd
+	{
+		irc_log(INFO, "before");
+		kick_from_channels(clients, channels, clients[i].second.get_nick());
+		irc_log(INFO, "after");
 		close_connection(clients, i);
+	}
 	return (buffer);
 }
 
@@ -103,7 +108,7 @@ void	loop_requests(int socket_d, std::string pwd)
 			}
 			if (i != 0) //if not socket_d
 			{
-				clients[i].second.msg += receive_msg(clients[i].first.fd, clients, i);//close only in here when receiving len of 0
+				clients[i].second.msg += receive_msg(clients[i].first.fd, clients, i, channels);//close only in here when receiving len of 0
 				if (i < clients.size() && clients[i].second.msg.find("\r\n") != std::string::npos)
 					parse_cmds(clients, channels, clients[i].second.msg, i, pwd);//no close in here cause QUIT is just a message at first
 			}

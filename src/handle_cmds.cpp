@@ -6,7 +6,7 @@
 /*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/24 10:32:47 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/24 11:11:36 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void	auth_user(client_type &clients, std::string input, std::string pwd, 
 	}
 }
 
-static void	handle_cmd(client_type &clients, channel_type &channels, std::string &msg, int i)
+static bool	handle_cmd(client_type &clients, channel_type &channels, std::string &msg, int i)
 {
 	std::string	reply;
 
@@ -42,9 +42,10 @@ static void	handle_cmd(client_type &clients, channel_type &channels, std::string
 	else if (msg.find("OPER ") == 0)
 		handle_set_op(clients, msg);
 	else if (msg.find("KILL ") == 0)
-		handle_kick_user(clients, i, msg);
+		return (handle_kick_user(clients, i, channels, msg));
 	// else if (msg.find("QUIT ") == 0)
 		//need to send msg to all members of same channel
+	return (false);
 }
 
 void	parse_cmds(client_type &clients, channel_type &channels, std::string &msg, int i, std::string pwd)
@@ -67,6 +68,9 @@ void	parse_cmds(client_type &clients, channel_type &channels, std::string &msg, 
 				init_user(clients[i].second, clients, tmp, clients[i].first.fd);
 		}
 		else
-			handle_cmd(clients, channels, tmp, i);
+		{
+			if (handle_cmd(clients, channels, tmp, i))
+				break ;
+		}
 	}
 }

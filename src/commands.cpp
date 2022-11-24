@@ -6,7 +6,7 @@
 /*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 10:33:14 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/24 11:52:07 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 #include "user.hpp"
 #include "prototypes.hpp"
 
-void	handle_ping(client_type &clients, size i)
+void		handle_ping(client_type &clients, size i)
 {
 	std::string reply = "PONG " + (std::string)SERVER_IP + "\r\n";
 	send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 }
 
-void	handle_channel_msg(client_type &clients, size i, channel_type &channels, std::string &msg)
+void		handle_channel_msg(client_type &clients, size i, channel_type &channels, std::string &msg)
 {
 	std::string reply;
 	std::string				ch_name = msg.substr(9, (msg.find(" ", 9) - 9));
@@ -46,7 +46,7 @@ void	handle_channel_msg(client_type &clients, size i, channel_type &channels, st
 	}
 }
 
-void	handle_priv_msg(client_type &clients, size i, std::string &msg)
+void		handle_priv_msg(client_type &clients, size i, std::string &msg)
 {
 	std::string reply;
 
@@ -64,7 +64,7 @@ void	handle_priv_msg(client_type &clients, size i, std::string &msg)
 	send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 }
 
-void	handle_join_channel(client_type &clients, size i, channel_type &channels, std::string &msg)
+void		handle_join_channel(client_type &clients, size i, channel_type &channels, std::string &msg)
 {
 	std::string	reply;
 	std::string ch_name = msg.substr(6, (msg.find(" ", 6) - 6));
@@ -107,7 +107,7 @@ void	handle_join_channel(client_type &clients, size i, channel_type &channels, s
 	send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 }
 
-void	handle_leave_channel(client_type &clients, size i, channel_type &channels, std::string &msg)
+void		handle_leave_channel(client_type &clients, size i, channel_type &channels, std::string &msg)
 {
 	std::string				reply;
 	std::string				ch_name = msg.substr(6, (msg.find(" ", 6) - 6));
@@ -147,7 +147,7 @@ void	handle_leave_channel(client_type &clients, size i, channel_type &channels, 
 	}
 }
 
-void	handle_set_op(client_type &clients, std::string &msg)
+void		handle_set_op(client_type &clients, std::string &msg)
 {
 	std::string nick = msg.substr(5, (msg.find(" ", 5) - 5));
 	std::string op_pwd = msg.substr((msg.find(" ", 5) + 1));
@@ -169,7 +169,7 @@ void	handle_set_op(client_type &clients, std::string &msg)
 	}
 }
 
-void	handle_kick_user(client_type &clients, size i, std::string &msg)
+bool		handle_kick_user(client_type &clients, size i, channel_type &channels, std::string &msg)
 {
 	std::string nick = msg.substr(5, (msg.find(" ", 5) - 5));
 	irc_log(INFO, nick);
@@ -186,9 +186,11 @@ void	handle_kick_user(client_type &clients, size i, std::string &msg)
 		{
 			if ((*it).second.get_nick() == nick)
 			{
+				kick_from_channels(clients, channels, nick);
 				close_connection(clients, it);
-				break ;
+				return (true);
 			}
 		}
 	}
+	return (false);
 }

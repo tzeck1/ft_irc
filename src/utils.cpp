@@ -6,7 +6,7 @@
 /*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 10:16:01 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/24 12:23:53 by tzeck            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ std::string	ip_itostr(in_addr_t ip_raw)
 	return (ss.str());
 }
 
-bool	nick_in_use(std::string nick, std::vector<client> &clients)
+bool	nick_in_use(std::string nick, client_type &clients)
 {
-	for (std::vector<client>::iterator it = clients.begin(); it != clients.end(); it++)
+	for (client_type::iterator it = clients.begin(); it != clients.end(); it++)
 	{
 		if (nick == it->second.get_nick())
 			return (true);
@@ -37,18 +37,49 @@ bool	nick_in_use(std::string nick, std::vector<client> &clients)
 	return (false);
 }
 
-void	close_connection(std::vector<client> &clients, size i)
+#include <stdlib.h>
+
+void	close_connection(client_type &clients, size i)
 {
 	if (close(clients[i].first.fd) == -1)
 		irc_log(CRITICAL, "failed to close file descriptor");
 	clients.erase(clients.begin() + i);
 }
 
-void	close_connection(std::vector<client> &clients, client_type::iterator it)
+void	close_connection(client_type &clients, client_type::iterator it)
 {
 	if (close((*it).second.get_fd()) == -1)
 		irc_log(CRITICAL, "failed to close file descriptor");
 	clients.erase(it);
+}
+
+void	kick_from_channels(client_type &clients, channel_type &channels, const std::string &nick)
+{
+	channel_type::iterator	it = channels.begin();
+
+	for (; it != channels.end(); it++)
+	{
+		if (user_present((*it).second, nick))
+		{
+			for (std::vector<User>::iterator it_users = (*it).second.begin(); it_users != (*it).second.end(); it_users++)
+			{
+				if (it_users->get_nick() == nick)
+				{
+					irc_log(INFO, "[inside-inside] before");
+					// std::string	reply = build_prefix(*it_users) + " PART #" + (*it).first + "\r\n";
+					// send((*it_users).get_fd(), reply.c_str(), reply.length(), 0);
+					(*it).second.erase(it_users);
+					irc_log(INFO, "[inside-inside] after");
+					break ;
+				}
+			}
+			irc_log(INFO, "[inside] before");
+			std::string	reply = build_prefix_from_nick(clients, nick) + " PART #" + (*it).first + "\r\n";
+			irc_log(INFO, "[inside] after");
+			for (std::vector<User>::iterator it_users = (*it).second.begin(); it_users != (*it).second.end(); it_users++)
+				send((*it_users).get_fd(), reply.c_str(), reply.length(), 0);
+		}
+	}
 }
 
 static std::string	get_names(channel_type channels, std::string ch_name)
@@ -153,4 +184,16 @@ std::string			build_prefix(User &user)
 
 	ss	<< ":" << user.get_nick() << "!" << user.get_user() << "@" << user.get_ip();
 	return (ss.str());
+}
+
+std::string			build_prefix_from_nick(client_type &clients, const std::string &nick)
+{
+	client_type::iterator it = clients.begin();
+
+	for (; it != clients.end(); it++)
+	{
+		if ((*it).second.get_nick() == nick)
+			break ;
+	}
+	return (build_prefix((*it).second));
 }
