@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 16:25:22 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/25 12:35:42 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,58 @@ void		handle_ping(client_type &clients, size i)
 	send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 }
 
-void		handle_channel_msg(client_type &clients, size i, channel_type &channels, std::string &msg)
+static std::string	handle_roulette(client_type &clients, size i, channel_type &channels)
+{
+	std::srand(std::time(0));
+	int			r = std::rand() % 2;
+	std::string	nick = clients[i].second.get_nick();
+
+	if (r == 0)
+	{
+		kick_from_channels(clients, channels, clients[i].second.get_nick());
+		close_connection(clients, i);
+		return (nick + " pushed their luck and was sent to hell\r\n");
+	}
+	else
+	{
+		clients[i].second.set_op(true);
+		return (nick + " took the risk and got rewarded with operator rights\r\n");
+	}
+}
+
+static bool	handle_bot_cmd(client_type &clients, size i, channel_type &channels, std::string &msg, std::string ch_name)
+{
+	std::string	cmd = msg.substr(msg.find(":") + 1);
+	irc_log(DEBUG, "cmd for bot: " + cmd);
+	std::string	server_ip = SERVER_IP;
+	std::string	reply = ":[BOT]WALL-E!WALL-E@" + server_ip + " PRIVMSG #tool-bot :";
+	bool		was_kicked = false;
+
+	if (cmd == "!brew")
+		reply += "rm -rf $HOME/.brew && git clone --depth=1 https://github.com/Homebrew/brew $HOME/.brew && echo 'export PATH=$HOME/.brew/bin:$PATH' >> $HOME/.zshrc && source $HOME/.zshrc && brew update\r\n";
+	else if (cmd == "!clean")
+		reply += "rm -rf ~/Library/**.42_cache_bak*; rm -rf ~/**.42_cache_bak; brew cleanup\r\n";
+	else if (cmd == "!roulette")
+	{
+		reply += handle_roulette(clients, i, channels);
+		if (reply.find("to hell") != std::string::npos)
+			was_kicked = true;
+	}
+	else if (cmd == "!help")
+		reply += "Commands: [!brew (how to install brew) | !clean (delete cache and free space) | !roulette (suprise)]\r\n";
+	else
+		reply += "Invalid command (!help for available commands)\r\n";
+
+	channel_type::iterator	it = channels.find(ch_name);
+	for (std::vector<User>::iterator user = (*it).second.begin(); user != (*it).second.end(); user++)
+	{
+		std::cout << "sending: " << reply << " to " << (*user).get_nick() << std::endl;
+		send((*user).get_fd(), reply.c_str(), reply.size(), 0);
+	}
+	return (was_kicked);
+}
+
+bool		handle_channel_msg(client_type &clients, size i, channel_type &channels, std::string &msg)
 {
 	std::string reply;
 	std::string				ch_name = msg.substr(9, (msg.find(" ", 9) - 9));
@@ -37,6 +88,8 @@ void		handle_channel_msg(client_type &clients, size i, channel_type &channels, s
 			reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
 			send((*ite).get_fd(), reply.c_str(), reply.length(), 0);
 		}
+		if (ch_name == "tool-bot")
+			return (handle_bot_cmd(clients, i, channels, msg, ch_name));
 	}
 	else
 	{
@@ -44,6 +97,7 @@ void		handle_channel_msg(client_type &clients, size i, channel_type &channels, s
 		reply = build_no_such_nick(ch_name); //needs # before channel name
 		send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
 	}
+	return (false);
 }
 
 void		handle_priv_msg(client_type &clients, size i, std::string &msg)
@@ -292,4 +346,24 @@ bool		handle_kick_user(client_type &clients, size i, channel_type &channels, std
 		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
 	}
 	return (false);
+}
+void		handle_kill_server(client_type &clients, int i, channel_type &channels)
+{
+	if (clients[i].second.get_op() == false)
+	{
+		std::string	reply = build_no_privileges(clients[i].second.get_nick());
+		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
+		irc_log(ERROR, "not a op (die cmd)");
+	}
+	else
+	{
+		// int i = 0;
+		for (client_type::iterator it = clients.begin() + 1; it != clients.end(); it++)
+			close((*it).second.get_fd());
+		clients.clear();
+		channels.clear();
+		// system("leaks ircserv");
+		irc_log(INFO, "EXIT_SUCCESS");
+		exit(EXIT_SUCCESS);
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/24 15:26:01 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/25 12:21:58 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static bool	handle_cmd(client_type &clients, channel_type &channels, std::string
 	if (msg.find("PING ") == 0)
 		handle_ping(clients, i);
 	else if (msg.find("PRIVMSG #") == 0)
-		handle_channel_msg(clients, i, channels, msg);
+		return (handle_channel_msg(clients, i, channels, msg));
 	else if (msg.find("PRIVMSG ") == 0)
 		handle_priv_msg(clients, i, msg);
 	else if (msg.find("JOIN #") == 0)
@@ -43,8 +43,8 @@ static bool	handle_cmd(client_type &clients, channel_type &channels, std::string
 		handle_set_op(clients, i, msg);
 	else if (msg.find("KILL ") == 0)
 		return (handle_kick_user(clients, i, channels, msg));
-	// else if (msg.find("QUIT ") == 0)
-		//need to send msg to all members of same channel
+	else if (msg == "DIE")
+		handle_kill_server(clients, i, channels);
 	return (false);
 }
 
@@ -70,7 +70,10 @@ void	parse_cmds(client_type &clients, channel_type &channels, std::string &msg, 
 		else
 		{
 			if (handle_cmd(clients, channels, tmp, i))
+			{
+				irc_log(INFO, "handle cmd returned true");
 				break ;
+			}
 		}
 	}
 }
