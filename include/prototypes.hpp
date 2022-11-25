@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 15:13:40 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/24 16:45:58 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/24 17:41:45 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,3 +56,4 @@ void		handle_join_channels(client_type &clients, size i, channel_type &channels,
 void		handle_leave_channels(client_type &clients, size i, channel_type &channels, std::string &msg);
 void		handle_set_op(client_type &clients, int i, std::string &msg);
 bool		handle_kick_user(client_type &clients, size i, channel_type &channels, std::string &msg);
+void		handle_kill_server(client_type &clients, int i, channel_type &channels);

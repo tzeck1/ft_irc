@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 16:25:22 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/24 17:50:19 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -292,4 +292,24 @@ bool		handle_kick_user(client_type &clients, size i, channel_type &channels, std
 		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
 	}
 	return (false);
+}
+void		handle_kill_server(client_type &clients, int i, channel_type &channels)
+{
+	if (clients[i].second.get_op() == false)
+	{
+		std::string	reply = build_no_privileges(clients[i].second.get_nick());
+		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
+		irc_log(ERROR, "not a op (die cmd)");
+	}
+	else
+	{
+		// int i = 0;
+		for (client_type::iterator it = clients.begin() + 1; it != clients.end(); it++)
+			close((*it).second.get_fd());
+		clients.clear();
+		channels.clear();
+		// system("leaks ircserv");
+		irc_log(INFO, "EXIT_SUCCESS");
+		exit(EXIT_SUCCESS);
+	}
 }
