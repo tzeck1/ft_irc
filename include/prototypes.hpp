@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 15:13:40 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/24 17:41:45 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/25 12:15:48 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ std::string	build_users_in_channel(channel_type &channels, std::string ch_name, 
 /*------	HANDLE COMMANDS	-----*/
 
 void		handle_ping(client_type &clients, size i);
-void		handle_channel_msg(client_type &clients, size i, channel_type &channels, std::string &msg);
+bool		handle_channel_msg(client_type &clients, size i, channel_type &channels, std::string &msg);
 void		handle_priv_msg(client_type &clients, size i, std::string &msg);
 void		handle_join_channels(client_type &clients, size i, channel_type &channels, std::string &msg);
 void		handle_leave_channels(client_type &clients, size i, channel_type &channels, std::string &msg);
