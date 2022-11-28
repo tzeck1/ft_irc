@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/28 17:36:55 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/28 18:54:17 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ static std::string	handle_roulette(client_type &clients, size i, channel_type &c
 static bool	handle_bot_cmd(client_type &clients, size i, channel_type &channels, std::string &msg, std::string ch_name)
 {
 	std::string	cmd = msg.substr(msg.find(":") + 1);
-	irc_log(DEBUG, "cmd for bot: " + cmd);
 	std::string	server_ip = SERVER_IP;
 	std::string	reply = ":[BOT]WALL-E!WALL-E@" + server_ip + " PRIVMSG #toolbot :";
 	bool		was_kicked = false;
@@ -128,15 +127,12 @@ static void		handle_join_channel(client_type &clients, size i, channel_type &cha
 	{
 		ch_name = msg.substr(0, msg.find(",", 0));
 		msg.erase(0, msg.find(",", 0) + 1);
-		irc_log(DEBUG, "message left after erasing first channel name" + msg);
 	}
 	else
 	{
 		ch_name = msg.substr(0, msg.find(" ", 0));
 		msg.erase(0, msg.find(",", 0));
-		irc_log(WARNING, "join last msg after erase: " + msg);
 	}
-	irc_log(DEBUG, "message left after erasing first channel name" + msg);
 	if (ch_name.size() == 0)
 		return ;
 	if (check_name(ch_name) == false)
@@ -152,10 +148,9 @@ static void		handle_join_channel(client_type &clients, size i, channel_type &cha
 	{
 		for (std::vector<User>::iterator it_users = it->second.begin(); it_users != it->second.end(); it_users++)
 		{
-			irc_log(DEBUG, "NICK: " + (*it_users).get_nick());
 			if (it_users->get_nick() == clients[i].second.get_nick())
 			{
-				irc_log(DEBUG, "user is duplicate");
+				irc_log(WARNING, "user is duplicate");
 				return ;
 			}
 		}
@@ -169,11 +164,10 @@ static void		handle_join_channel(client_type &clients, size i, channel_type &cha
 		channels.insert(new_ch);
 		reply = build_prefix(clients[i].second) + " JOIN #" + ch_name + "\r\n";
 		send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
-		irc_log(DEBUG, "channel created");
+		irc_log(TRACE, "channel created");
 	}
 	else // add user to channel
 	{
-		// irc_log(DEBUG, "channel exists");
 		(*it).second.push_back(clients[i].second);
 
 		std::vector<User>	users = (*it).second;
@@ -181,7 +175,6 @@ static void		handle_join_channel(client_type &clients, size i, channel_type &cha
 		for (; ite != users.end(); ite++)
 		{
 			reply = build_prefix(clients[i].second) + " JOIN #" + ch_name + "\r\n";
-			// irc_log(DEBUG, reply);
 			send((*ite).get_fd(), reply.c_str(), reply.length(), 0);
 		}
 	}
@@ -192,7 +185,6 @@ static void		handle_join_channel(client_type &clients, size i, channel_type &cha
 void		handle_join_channels(client_type &clients, size i, channel_type &channels, std::string &msg)
 {
 	msg.erase(0, 5);
-	irc_log(DEBUG, "msg after cutting JOIN is: " + msg);
 	if (msg.find(",", 0) == std::string::npos)
 		handle_join_channel(clients, i, channels, msg);
 	else
@@ -207,33 +199,25 @@ static void		handle_leave_channel(client_type &clients, size i, channel_type &ch
 	std::string				reply;
 	std::string				ch_name;
 
-	irc_log(DEBUG, "msg in handle_leave: " + msg);
 	msg.erase(0, 1);
 	if (msg.find(",", 0) != std::string::npos)
 	{
 		ch_name = msg.substr(0, msg.find(",", 0));
 		msg.erase(0, msg.find(",", 0) + 1);
-		irc_log(DEBUG, "message left after erasing first channel name" + msg);
 	}
 	else
 	{
 		ch_name = msg.substr(0, msg.find(" ", 0));
 		msg.erase(0, msg.find(",", 0));
-		irc_log(WARNING, "leave last msg after erase: " + msg);
 	}
-	irc_log(DEBUG, "message left after erasing first channel name" + ch_name);
 	if (ch_name.size() == 0)
 		return ;
 	channel_type::iterator	it = channels.find(ch_name);
 	if (it != channels.end()) // channel found
 	{
-		// std::vector<User>	users = (*it).second;
-		irc_log(DEBUG, "channel name is " + (*it).first);
 		std::vector<User>::iterator	ite;
 		for (ite = (*it).second.begin(); ite != (*it).second.end(); ite++)
 		{
-			// if (clients[i].second.get_nick() == (*ite).get_nick())
-			// 	continue ;
 			reply = build_prefix(clients[i].second) + " PART #" + ch_name + " " + comment + "\r\n";
 			send((*ite).get_fd(), reply.c_str(), reply.length(), 0);
 		}
@@ -247,7 +231,7 @@ static void		handle_leave_channel(client_type &clients, size i, channel_type &ch
 		}
 		if ((*it).second.size() == 0)
 		{
-			irc_log(DEBUG, "channel deleted");
+			irc_log(TRACE, "channel deleted");
 			channels.erase(ch_name);
 		}
 	}
@@ -267,13 +251,8 @@ void		handle_leave_channels(client_type &clients, size i, channel_type &channels
 	{
 		comment = msg.substr(msg.find(":", 0) + 1, msg.size() - (msg.find(":", 0) + 1));//from next spacebar after channel name until end
 		msg.erase(msg.find(":", 0) - 1, msg.size() - (msg.find(":", 0) - 1));//delete the parting msg part
-		irc_log(TRACE, "msg after erasing comment: " + msg);
 	}
-	if (comment.size())
-		irc_log(INFO, "parting msg is " + comment);
-
 	msg.erase(0, 5);
-	irc_log(DEBUG, "msg after cutting LEAVE is: " + msg);
 	if (msg.find(",", 0) == std::string::npos)
 		handle_leave_channel(clients, i, channels, msg, comment);
 	else
@@ -291,7 +270,7 @@ void		handle_set_op(client_type &clients, int i, std::string &msg)
 
 	if (op_pwd != OP_PWD)
 	{
-		irc_log(ERROR, "wrong oper password!");
+		irc_log(WARNING, "wrong oper password!");
 		reply = build_bad_pwd(op_pwd);
 		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
 	}
@@ -305,7 +284,7 @@ void		handle_set_op(client_type &clients, int i, std::string &msg)
 		}
 		if (it == clients.end())
 		{
-			irc_log(ERROR, "nick for oper cmd not found!");
+			irc_log(WARNING, "nick for oper cmd not found!");
 			reply = build_no_such_nick(nick);
 			send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
 		}
@@ -326,15 +305,12 @@ bool		handle_kick_user(client_type &clients, size i, channel_type &channels, std
 	if (n != std::string::npos)
 		reason = msg.substr(n + 1);
 	std::string	reply;
-	irc_log(INFO, nick);
-	// std::string reason = msg.substr((msg.find(" ", 6)));
-	irc_log(INFO, reason);
 
 	if (clients[i].second.get_op() == false)
 	{
 		reply = build_no_privileges(clients[i].second.get_nick());
 		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
-		irc_log(ERROR, "not a op (kill cmd)");
+		irc_log(WARNING, "not a op (kill cmd)");
 	}
 	else if (clients[i].second.get_nick() == nick)
 	{
@@ -370,11 +346,10 @@ void		handle_kill_server(client_type &clients, int i, channel_type &channels)
 	{
 		std::string	reply = build_no_privileges(clients[i].second.get_nick());
 		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
-		irc_log(ERROR, "not a op (die cmd)");
+		irc_log(WARNING, "not a op (die cmd)");
 	}
 	else
 	{
-		// int i = 0;
 		for (client_type::iterator it = clients.begin() + 1; it != clients.end(); it++)
 			close((*it).second.get_fd());
 		clients.clear();

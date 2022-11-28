@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/28 18:40:52 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/28 18:50:45 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ static void	accept_users(std::vector<client> &clients, int socket_d)
 		pollfd	new_pollfd;
 		new_pollfd.fd = new_fd;
 		new_pollfd.events = POLLIN;
-		irc_log(INFO, "revents at accept: " + std::to_string((int)new_pollfd.revents));
 		new_pollfd.revents = 0;
 		User	new_user;
 		new_user.set_ip(ip_itostr(client_addr.sin_addr.s_addr));
@@ -76,9 +75,7 @@ static std::string	receive_msg(int client_fd, std::vector<client> &clients, size
 		irc_log(WARNING, "recv() failed");
 	if (err == 0) //TODO: should erase vector and 'close' fd
 	{
-		irc_log(INFO, "before");
 		kick_from_channels(clients, channels, clients[i].second.get_nick());
-		irc_log(INFO, "after");
 		close_connection(clients, i);
 	}
 	return (buffer);
@@ -103,14 +100,8 @@ void	loop_requests(int socket_d, std::string pwd)
 		{
 			if (clients[i].first.revents == 0) //skips user first time after accept
 				continue ;
-			// if (clients[i].first.revents != POLLIN && clients[i].first.revents != (POLLIN | POLLHUP)) //POLLIN: incoming connection POLLIN|POLLHUP: disconnect by user
-			irc_log(INFO, "revents: " + std::to_string((int)clients[i].first.revents));
 			if (!(clients[i].first.revents & POLLIN)) //POLLIN: incoming connection POLLIN|POLLHUP: disconnect by user
-			{
-				irc_log(TRACE, "revents problem happening at fd ");
-				std::cerr << i << std::endl;
 				irc_log(CRITICAL, "Error revents problem!");
-			}
 			if (i != 0) //if not socket_d
 			{
 				clients[i].second.msg += receive_msg(clients[i].first.fd, clients, i, channels);//close only in here when receiving len of 0

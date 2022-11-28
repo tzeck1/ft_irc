@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/28 12:26:13 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/28 18:49:38 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,17 +65,11 @@ void	kick_from_channels(client_type &clients, channel_type &channels, const std:
 			{
 				if (it_users->get_nick() == nick)
 				{
-					irc_log(INFO, "[inside-inside] before");
-					// std::string	reply = build_prefix(*it_users) + " PART #" + (*it).first + "\r\n";
-					// send((*it_users).get_fd(), reply.c_str(), reply.length(), 0);
 					(*it).second.erase(it_users);
-					irc_log(INFO, "[inside-inside] after");
 					break ;
 				}
 			}
-			irc_log(INFO, "[inside] before");
 			std::string	reply = build_prefix_from_nick(clients, nick) + " PART #" + (*it).first + "\r\n";
-			irc_log(INFO, "[inside] after");
 			for (std::vector<User>::iterator it_users = (*it).second.begin(); it_users != (*it).second.end(); it_users++)
 				send((*it_users).get_fd(), reply.c_str(), reply.length(), 0);
 		}
@@ -122,7 +116,7 @@ bool	check_name(std::string input)
 	{
 		if (isalnum(input[i]) == 0)
 		{
-			irc_log(ERROR, "Nick/Channel name contains invalid chars!");
+			irc_log(WARNING, "Nick/Channel name contains invalid chars!");
 			return (false);
 		}
 	}
@@ -232,7 +226,6 @@ std::string	build_users_in_channel(channel_type &channels, std::string ch_name, 
 	
 	ss	<< ":" << SERVER_IP << " 366 " << user.get_nick()
 		<< " #" << ch_name << " :End of NAMES list." << "\r\n";
-	irc_log(DEBUG, ss.str());
 	return (ss.str());
 }
 

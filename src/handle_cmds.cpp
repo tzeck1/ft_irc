@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/28 17:36:25 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/28 18:51:43 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,7 @@ void	parse_cmds(client_type &clients, channel_type &channels, std::string &msg, 
 {
 	std::string	tmp;
 
-	irc_log(TRACE, "called handle_cmds with msg");
-	irc_log(DEBUG, msg);
+	irc_log(INFO, "called handle_cmds with msg: " + msg);
 	for (std::string::size_type	pos = msg.find("\r\n"); pos != std::string::npos; pos = msg.find("\r\n"))
 	{
 		if (pos == 0)
@@ -70,10 +69,7 @@ void	parse_cmds(client_type &clients, channel_type &channels, std::string &msg, 
 		else
 		{
 			if (handle_cmd(clients, channels, tmp, i))
-			{
-				irc_log(INFO, "handle cmd returned true");
 				break ;
-			}
 		}
 	}
 }
