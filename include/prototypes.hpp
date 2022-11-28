@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 15:13:40 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/25 12:15:48 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/28 12:27:56 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void		kick_from_channels(client_type &clients, channel_type &channels, const std
 std::string	ip_itostr(in_addr_t ip_raw);
 bool		nick_in_use(std::string nick, client_type &clients);
 bool		check_pwd(std::string input, std::string pwd);
-bool		check_nick(std::string input);
+bool		check_name(std::string input);
 std::string	get_nick_from_msg(std::string msg);
 bool		user_present(std::vector<User> users, std::string nick);
 
@@ -39,11 +39,13 @@ std::string	build_prefix(User &user);
 std::string	build_prefix_from_nick(client_type &clients, const std::string &nick);
 std::string	build_no_such_nick(std::string nick);
 std::string	build_erroneus_nick(std::string nick);
+std::string	build_erroneus_chan(std::string chan);
 std::string	build_nick_in_use(User user);
 std::string	build_welcome(User user);
 std::string	build_bad_pwd(std::string pwd);
 std::string	build_youre_oper(std::string nick);
 std::string	build_no_privileges(std::string nick);
+std::string	build_kill_failed(std::string nick);
 std::string	build_kill_done(std::string nick, std::string reason);
 std::string	build_users_in_channel(channel_type &channels, std::string ch_name, User &user);
 

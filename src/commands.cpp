@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/25 12:35:42 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/28 12:27:16 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,13 @@ static void		handle_join_channel(client_type &clients, size i, channel_type &cha
 	irc_log(DEBUG, "message left after erasing first channel name" + msg);
 	if (ch_name.size() == 0)
 		return ;
+	if (check_name(ch_name) == false)
+	{
+		irc_log(WARNING, "forbidden character in channel name");
+		reply = build_erroneus_chan(ch_name);
+		send(clients[i].first.fd, reply.c_str(), reply.length(), 0);
+		return ;
+	}
 	channel_type::iterator it = channels.find(ch_name);
 
 	for (std::vector<User>::iterator it_users = it->second.begin(); it_users != it->second.end(); it_users++)
@@ -325,6 +332,11 @@ bool		handle_kick_user(client_type &clients, size i, channel_type &channels, std
 		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
 		irc_log(ERROR, "not a op (kill cmd)");
 	}
+	else if (clients[i].second.get_nick() == nick)
+	{
+		reply = build_kill_failed(clients[i].second.get_nick());
+		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
+	}
 	else
 	{
 		client_type::iterator it = clients.begin();
@@ -332,11 +344,12 @@ bool		handle_kick_user(client_type &clients, size i, channel_type &channels, std
 		{
 			if ((*it).second.get_nick() == nick)
 			{
-				if (clients[i].second.get_nick() != nick)
-				{
+				// if (clients[i].second.get_nick() != nick)
+				// {
 					reply = build_kill_done(nick, reason);
 					send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
-				}
+					send((*it).first.fd, reply.c_str(), reply.size(), 0);
+				// }
 				kick_from_channels(clients, channels, nick);
 				close_connection(clients, it);
 				return (true);

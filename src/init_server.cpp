@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_server.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:39:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 09:50:40 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/28 11:35:50 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	init_server(int port)
 {
 	/*-----	create socket	-----*/
-	int	socket_d = socket(AF_INET, SOCK_STREAM, 0); //socket discriptor
+	int	socket_d = socket(AF_INET, SOCK_STREAM, 0); //socket descriptor
 	if (socket_d < 0)
 		irc_log(CRITICAL, "socket() failed!");
 
@@ -30,7 +30,7 @@ int	init_server(int port)
 	if (err < 0)
 		irc_log(CRITICAL, "fcntl() failed!");
 
-	/*-----	assigne address to socket	-----*/
+	/*-----	assign address to socket	-----*/
 	struct sockaddr_in addr;
 	std::memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET; // set to ipv4

@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:14:58 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/24 16:49:08 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/28 12:27:58 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	init_user(User &user, std::vector<client> &clients, std::string client_msg,
 			std::string	error = build_nick_in_use(user);
 			send(fd, error.c_str(), error.length(), 0);
 		}
-		else if (check_nick(nick) == false)
+		else if (check_name(nick) == false)
 		{
 			irc_log(WARNING, "forbidden character in nickname");
 			std::string	error = build_erroneus_nick(nick);

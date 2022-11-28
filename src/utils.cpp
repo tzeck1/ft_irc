@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 16:46:07 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/28 12:26:13 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,13 +116,13 @@ bool	check_pwd(std::string input, std::string pwd)
 		return (false);
 }
 
-bool	check_nick(std::string input)
+bool	check_name(std::string input)
 {
 	for (int i = 0; input[i] != '\0'; i++)
 	{
 		if (isalnum(input[i]) == 0)
 		{
-			irc_log(ERROR, "Nick contains invalid chars!");
+			irc_log(ERROR, "Nick/Channel name contains invalid chars!");
 			return (false);
 		}
 	}
@@ -146,7 +146,7 @@ std::string	build_nick_in_use(User user)
 	std::stringstream	ss;
 
 	ss	<< ":" << SERVER_IP << " 433 * " << user.get_nick()
-		<< " :Nickname is already in use." << "\r\n";
+		<< " :Nickname is already in use" << "\r\n";
 	return (ss.str());
 }
 
@@ -155,7 +155,7 @@ std::string	build_no_such_nick(std::string nick)
 	std::stringstream	ss;
 
 	ss	<< ":" << SERVER_IP << " 401 " << nick
-		<< " :No such nick/channel." << "\r\n";
+		<< " :No such nick/channel" << "\r\n";
 	return (ss.str());
 }
 
@@ -164,7 +164,16 @@ std::string	build_erroneus_nick(std::string nick)
 	std::stringstream	ss;
 
 	ss	<< ":" << SERVER_IP << " 432 " << nick
-		<< " :invalid characters in given nick." << "\r\n";
+		<< " :invalid characters in given nick" << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_erroneus_chan(std::string chan)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 403 " << chan
+		<< " :invalid characters in given channel name" << "\r\n";
 	return (ss.str());
 }
 
@@ -173,7 +182,7 @@ std::string	build_bad_pwd(std::string pwd)
 	std::stringstream	ss;
 
 	ss	<< ":" << SERVER_IP << " 464 " << pwd
-		<< " :Incorrect server password." << "\r\n";
+		<< " :Incorrect password" << "\r\n";
 	return (ss.str());
 }
 
@@ -182,7 +191,7 @@ std::string	build_youre_oper(std::string nick)
 	std::stringstream	ss;
 
 	ss	<< ":" << SERVER_IP << " 381 " << nick
-		<< " :You are now an IRC operator." << "\r\n";
+		<< " :You are now an IRC operator" << "\r\n";
 	return (ss.str());
 }
 
@@ -191,7 +200,16 @@ std::string	build_no_privileges(std::string nick)
 	std::stringstream	ss;
 
 	ss	<< ":" << SERVER_IP << " 481 " << nick
-		<< " :Permission Denied - You're not an IRC operator." << "\r\n";
+		<< " :Permission Denied - You're not an IRC operator" << "\r\n";
+	return (ss.str());
+}
+
+std::string	build_kill_failed(std::string nick)
+{
+	std::stringstream	ss;
+
+	ss	<< ":" << SERVER_IP << " 485 " << nick
+		<< " :Permission Denied - You can't kick yourself" << "\r\n";
 	return (ss.str());
 }
 
