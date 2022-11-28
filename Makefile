@@ -3,57 +3,51 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mmeising <mmeising@student.42.fr>          +#+  +:+       +#+         #
+#    By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/24 12:29:22 by mmeising         ###   ########.fr        #
+#    Updated: 2022/11/25 14:20:24 by btenzlin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-VPATH = src .
-
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 # COLORS
 Y = "\033[33m"
 R = "\033[31m"
 G = "\033[32m"
 B = "\033[34m"
 X = "\033[0m"
-UP = "\033[A"
-CUT = "\033[K"
 # EXECUTABLE
 NAME = ./ircserv
 # PATHS
-OBJ_PATH = ./.obj/
+SRC_PATH = ./src/
+OBJ_PATH = ./obj/
 # SOURCES
-SRC =	main.cpp init_server.cpp utils.cpp loop_requests.cpp handle_cmds.cpp \
-		user.cpp debug.cpp commands.cpp
+SRC =	$(SRC_PATH)commands.cpp \
+		$(SRC_PATH)debug.cpp \
+		$(SRC_PATH)handle_cmds.cpp \
+		$(SRC_PATH)init_server.cpp \
+		$(SRC_PATH)loop_requests.cpp \
+		$(SRC_PATH)user.cpp \
+		$(SRC_PATH)utils.cpp \
+		$(SRC_PATH)main.cpp
 
 # OBJECTS
-OBJ :=$(addprefix $(OBJ_PATH), $(SRC:.cpp=.o))
-# INCLUDES
-INC = -I ./include
-
+OBJ = $(patsubst $(SRC_PATH)%.c, $(OBJ_PATH)%.o, $(SRC))
 # RULES
 all: $(NAME)
-	$(NAME) 420 test
+
+$(OBJ_PATH)%.o :$(SRC_PATH)%.c
+	@echo $(Y)Compiling [$@]...$(X)
+	@mkdir -p $(dir $@)
+	@c++ $(CFLAGS) -c -o $@ $<
+	@echo $(G)Finished [$@]$(X)
 
 $(NAME): $(OBJ)
-	@echo $(Y)Compiling [$(OBJ)]
+	@echo $(Y)Compiling [$(SRC)]
 	@echo into [$(NAME)]...$(X)
-	@$(CXX) $(CXXFLAGS) $^ $(INC) -o $(NAME)
-	@printf $(UP)$(CUT)
-	@printf $(UP)$(CUT)
-	@printf $(UP)$(CUT)
+	@c++ $(CFLAGS) $(OBJ) -o $(NAME)
 	@echo $(G)Finished [$(NAME)]$(X)
-
-$(OBJ_PATH)%.o: %.cpp
-	@echo $(Y)Compiling [$@]...$(X)
-	@mkdir -p .obj
-	@$(CXX) $(CXXFLAGS) -MMD -MP -c $< $(INC) -o $@
-	@echo $(G)Finished [$@]$(X)
-	@printf $(UP)$(CUT)
-	@printf $(UP)$(CUT)
 
 clean:
 	@if [ -d "$(OBJ_PATH)" ]; then \
@@ -72,6 +66,4 @@ fclean: clean
 re: fclean all
 
 # ADDITIONAL RULES
-.PHONY: all clean fclean re
-
--include $(OBJ:.o=.d)
+.PHONY: all, clean, fclean, re, norm

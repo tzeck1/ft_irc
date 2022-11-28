@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   loop_requests.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 12:17:10 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/25 14:20:02 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "prototypes.hpp"
-#include "user.hpp"
+#include "../include/common.hpp"
 
 std::vector<pollfd>	get_client_fds(std::vector<client> &clients)
 {

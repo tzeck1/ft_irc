@@ -6,12 +6,12 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 13:14:58 by btenzlin          #+#    #+#             */
-/*   Updated: 2022/11/24 16:49:08 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/25 14:20:02 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "user.hpp"
-#include "prototypes.hpp"
+#include "../include/common.hpp"
+
 #include <sstream>
 
 User::User(void) : _is_complete(false), _auth(false), _op(false)	{ }

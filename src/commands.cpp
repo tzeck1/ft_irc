@@ -6,13 +6,11 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/25 12:35:42 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/25 14:20:02 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "common.hpp"
-#include "user.hpp"
-#include "prototypes.hpp"
+#include "../include/common.hpp"
 
 void		handle_ping(client_type &clients, size i)
 {

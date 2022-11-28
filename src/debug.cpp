@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   debug.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 09:47:50 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 09:49:00 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/25 14:20:02 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "common.hpp"
+#include "../include/common.hpp"
 
 /**
  * 0 - quiet: 			No messages printed.

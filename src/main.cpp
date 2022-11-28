@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 10:29:09 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 11:27:11 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/25 14:20:02 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "prototypes.hpp"
+#include "../include/common.hpp"
 
 static std::string	get_pwd(char *input)
 {

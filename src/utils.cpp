@@ -6,13 +6,13 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 13:28:23 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 16:46:07 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/25 14:20:02 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "user.hpp"
-#include "common.hpp"
-#include "prototypes.hpp"
+
+#include "../include/common.hpp"
+
 #include <sstream>
 #include <unistd.h>
 
