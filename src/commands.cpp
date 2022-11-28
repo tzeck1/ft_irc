@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/28 12:27:16 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/28 17:36:55 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static bool	handle_bot_cmd(client_type &clients, size i, channel_type &channels,
 	std::string	cmd = msg.substr(msg.find(":") + 1);
 	irc_log(DEBUG, "cmd for bot: " + cmd);
 	std::string	server_ip = SERVER_IP;
-	std::string	reply = ":[BOT]WALL-E!WALL-E@" + server_ip + " PRIVMSG #tool-bot :";
+	std::string	reply = ":[BOT]WALL-E!WALL-E@" + server_ip + " PRIVMSG #toolbot :";
 	bool		was_kicked = false;
 
 	if (cmd == "!brew")
@@ -88,7 +88,7 @@ bool		handle_channel_msg(client_type &clients, size i, channel_type &channels, s
 			reply = build_prefix(clients[i].second) + " " + msg + "\r\n";
 			send((*ite).get_fd(), reply.c_str(), reply.length(), 0);
 		}
-		if (ch_name == "tool-bot")
+		if (ch_name == "toolbot")
 			return (handle_bot_cmd(clients, i, channels, msg, ch_name));
 	}
 	else
@@ -148,12 +148,16 @@ static void		handle_join_channel(client_type &clients, size i, channel_type &cha
 	}
 	channel_type::iterator it = channels.find(ch_name);
 
-	for (std::vector<User>::iterator it_users = it->second.begin(); it_users != it->second.end(); it_users++)
+	if (it != channels.end())
 	{
-		if (it_users->get_nick() == clients[i].second.get_nick())
+		for (std::vector<User>::iterator it_users = it->second.begin(); it_users != it->second.end(); it_users++)
 		{
-			irc_log(DEBUG, "user is duplicate");
-			return ;
+			irc_log(DEBUG, "NICK: " + (*it_users).get_nick());
+			if (it_users->get_nick() == clients[i].second.get_nick())
+			{
+				irc_log(DEBUG, "user is duplicate");
+				return ;
+			}
 		}
 	}
 	if (it == channels.end()) // create channel

@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:11:13 by mmeising          #+#    #+#             */
-/*   Updated: 2022/11/28 11:48:44 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/28 17:36:25 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,6 @@ static bool	handle_cmd(client_type &clients, channel_type &channels, std::string
 		return (handle_kick_user(clients, i, channels, msg));
 	else if (msg == "DIE")
 		handle_kill_server(clients, i, channels);
-	else
-	{
-		std::string reply = ":" + std::string(SERVER_IP) + " 421 " + msg.substr(0, msg.find(" ")) + " :unknown command\r\n";
-		send(clients[i].first.fd, reply.c_str(), reply.size(), 0);
-	}
 	return (false);
 }
 

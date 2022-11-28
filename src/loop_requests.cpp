@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   loop_requests.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tzeck <@student.42heilbronn.de>            +#+  +:+       +#+        */
+/*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 10:36:57 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/24 12:17:10 by tzeck            ###   ########.fr       */
+/*   Updated: 2022/11/28 18:40:52 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ static void	accept_users(std::vector<client> &clients, int socket_d)
 		pollfd	new_pollfd;
 		new_pollfd.fd = new_fd;
 		new_pollfd.events = POLLIN;
+		irc_log(INFO, "revents at accept: " + std::to_string((int)new_pollfd.revents));
+		new_pollfd.revents = 0;
 		User	new_user;
 		new_user.set_ip(ip_itostr(client_addr.sin_addr.s_addr));
 		new_user.set_fd(new_fd);
@@ -86,11 +88,12 @@ void	loop_requests(int socket_d, std::string pwd)
 {
 	std::vector<client>							clients;
 	std::map< std::string, std::vector<User> >	channels;
-	User										server("server");
+	User										server(" ");
 	pollfd										socket;
 
 	socket.fd = socket_d; // open file
 	socket.events = POLLIN; // requestet events (POLLIN = there is data to be read)
+	socket.revents = 0;
 	clients.push_back(client(socket, server));
 	while (true)
 	{
@@ -100,7 +103,9 @@ void	loop_requests(int socket_d, std::string pwd)
 		{
 			if (clients[i].first.revents == 0) //skips user first time after accept
 				continue ;
-			if (clients[i].first.revents != POLLIN && clients[i].first.revents != (POLLIN | POLLHUP)) //POLLIN: incoming connection POLLIN|POLLHUP: disconnect by user
+			// if (clients[i].first.revents != POLLIN && clients[i].first.revents != (POLLIN | POLLHUP)) //POLLIN: incoming connection POLLIN|POLLHUP: disconnect by user
+			irc_log(INFO, "revents: " + std::to_string((int)clients[i].first.revents));
+			if (!(clients[i].first.revents & POLLIN)) //POLLIN: incoming connection POLLIN|POLLHUP: disconnect by user
 			{
 				irc_log(TRACE, "revents problem happening at fd ");
 				std::cerr << i << std::endl;
