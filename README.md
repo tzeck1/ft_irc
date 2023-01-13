@@ -30,8 +30,8 @@ A philosopher has to announce its current status in the STDOUT, which can be: <b
 ``make`` to compile all source files <br>
 ``./ircserv <port> <password>``
 
-``brew install weechat`` (feel free to use your favorite irc client instead (only tested with weechat))
-in weechat:
-``/server add <server_name> <ip>/<port>``
-``/connect <server_name> -password=<password>``
+``brew install weechat`` (feel free to use your favorite irc client instead (only tested with weechat)) <br>
+in weechat: <br>
+``/server add <server_name> <ip>/<port>`` <br>
+``/connect <server_name> -password=<password>`` <br>
 type ``/help`` for more commands
