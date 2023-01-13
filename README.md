@@ -31,6 +31,7 @@ A philosopher has to announce its current status in the STDOUT, which can be: <b
 ``./ircserv <port> <password>``
 
 ``brew install weechat`` (feel free to use your favorite irc client instead (only tested with weechat)) <br>
+``weechat`` to open client <br>
 in weechat: <br>
 ``/server add <server_name> <ip>/<port>`` <br>
 ``/connect <server_name> -password=<password>`` <br>
