@@ -6,13 +6,13 @@
 #    By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/13 12:21:11 by btenzlin          #+#    #+#              #
-#    Updated: 2022/11/28 18:04:23 by btenzlin         ###   ########.fr        #
+#    Updated: 2022/11/28 19:17:00 by btenzlin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 VPATH = src .
 
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 # -g -fsanitize=address
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 # COLORS
 Y = "\033[33m"
 R = "\033[31m"
@@ -36,7 +36,6 @@ INC = -I ./include
 
 # RULES
 all: $(NAME)
-	$(NAME) 420 test
 
 $(NAME): $(OBJ)
 	@echo $(Y)Compiling [$(OBJ)]

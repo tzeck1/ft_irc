@@ -6,7 +6,7 @@
 /*   By: btenzlin <btenzlin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:07:36 by tzeck             #+#    #+#             */
-/*   Updated: 2022/11/28 18:54:17 by btenzlin         ###   ########.fr       */
+/*   Updated: 2022/11/28 19:23:04 by btenzlin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,7 @@ static bool	handle_bot_cmd(client_type &clients, size i, channel_type &channels,
 
 	channel_type::iterator	it = channels.find(ch_name);
 	for (std::vector<User>::iterator user = (*it).second.begin(); user != (*it).second.end(); user++)
-	{
-		std::cout << "sending: " << reply << " to " << (*user).get_nick() << std::endl;
 		send((*user).get_fd(), reply.c_str(), reply.size(), 0);
-	}
 	return (was_kicked);
 }
 
