@@ -28,4 +28,10 @@ A philosopher has to announce its current status in the STDOUT, which can be: <b
 ## Usage
 
 ``make`` to compile all source files <br>
-``./philo <philo number> <time to die> <time to eat> <time to sleep> <number must eat>`` to start the simulation
+``./ircserv <port> <password>``
+
+``brew install weechat`` (feel free to use your favorite irc client instead (only tested with weechat))
+in weechat:
+``/server add <server_name> <ip>/<port>``
+``/connect <server_name> -password=<password>``
+type ``/help`` for more commands
