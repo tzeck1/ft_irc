@@ -9,8 +9,6 @@ Here you can read more about the concept https://en.wikipedia.org/wiki/Internet_
 <img width="200" alt="Screenshot 2023-01-13 at 15 15 41" src="https://user-images.githubusercontent.com/65648486/212340953-70706bbf-6571-4ffb-a366-e1e1d57c3523.png">
 <br>
 
-## Introduction
-
 ## Usage
 
 ``make`` to compile all source files <br>
